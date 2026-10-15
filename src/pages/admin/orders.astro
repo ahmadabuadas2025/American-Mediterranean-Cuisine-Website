@@ -1,0 +1,194 @@
+---
+/**
+ * Owner order dashboard. The page itself is static; data is fetched from
+ * /api/admin/orders with the ADMIN_PASSWORD, which is kept only in this tab's
+ * sessionStorage.
+ */
+import '../../styles/global.css';
+---
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Orders | American Mediterranean Cuisine</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body class="bg-ivory">
+    <main class="container-x py-10" id="main">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <h1 class="h-md">Orders and inquiries</h1>
+        <div class="flex flex-wrap gap-2" data-tools hidden>
+          <button type="button" class="btn btn-ghost min-h-11" data-refresh>Refresh</button>
+          <button type="button" class="btn btn-olive min-h-11" data-csv>Download CSV</button>
+          <button type="button" class="btn btn-ghost min-h-11" data-logout>Sign out</button>
+        </div>
+      </div>
+
+      <form class="card mt-8 grid max-w-md gap-4 p-6" data-login>
+        <label for="pw" class="field-label">Admin password</label>
+        <input id="pw" type="password" autocomplete="current-password" class="input" required />
+        <button class="btn btn-primary" type="submit">Sign in</button>
+        <p class="field-error" data-login-error role="alert" hidden></p>
+        <p class="field-hint">Set ADMIN_PASSWORD (12+ characters) in Netlify environment variables. Menu and content edits live in the <a class="underline" href="/admin/">content manager</a>.</p>
+      </form>
+
+      <div data-board hidden>
+        <div class="mt-6 flex flex-wrap items-end gap-4">
+          <div>
+            <label for="filter-status" class="field-label">Status</label>
+            <select id="filter-status" class="input" data-filter-status>
+              <option value="">All</option>
+              <option value="request_received">Request received</option>
+              <option value="quote_sent">Quote sent</option>
+              <option value="awaiting_payment">Awaiting payment</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+          <div class="flex-1">
+            <label for="filter-q" class="field-label">Search</label>
+            <input id="filter-q" class="input" placeholder="Name, ID, company" data-filter-q />
+          </div>
+        </div>
+        <p class="mt-4 text-sm text-muted" data-count aria-live="polite"></p>
+        <div class="mt-4 overflow-x-auto rounded-2xl border border-sand bg-paper">
+          <table class="w-full min-w-[56rem] text-left text-sm">
+            <thead class="border-b border-sand text-muted">
+              <tr>
+                <th scope="col" class="p-3">ID / submitted</th><th scope="col" class="p-3">Customer</th><th scope="col" class="p-3">Service</th>
+                <th scope="col" class="p-3">Date</th><th scope="col" class="p-3">Value</th><th scope="col" class="p-3">Status</th><th scope="col" class="p-3">Follow-up</th>
+              </tr>
+            </thead>
+            <tbody data-rows></tbody>
+          </table>
+        </div>
+      </div>
+
+      <dialog class="m-auto w-[min(48rem,calc(100vw-2rem))] rounded-[var(--radius-card)] bg-paper p-0 backdrop:bg-olive-deep/60" data-detail aria-labelledby="detail-title">
+        <form method="dialog" class="grid gap-4 p-6" data-detail-form>
+          <div class="flex items-start justify-between gap-4">
+            <h2 id="detail-title" class="h-sm" data-detail-title></h2>
+            <button value="cancel" class="grid size-11 place-items-center rounded-full border border-sand" aria-label="Close">×</button>
+          </div>
+          <div class="grid gap-1 text-sm" data-detail-body></div>
+          <div class="grid gap-4 sm:grid-cols-3">
+            <div><label class="field-label" for="d-status">Status</label>
+              <select class="input" id="d-status" name="status">
+                <option value="request_received">Request received</option><option value="quote_sent">Quote sent</option>
+                <option value="awaiting_payment">Awaiting payment</option><option value="confirmed">Confirmed</option>
+                <option value="completed">Completed</option><option value="cancelled">Cancelled</option>
+              </select></div>
+            <div><label class="field-label" for="d-owner">Follow-up owner</label><input class="input" id="d-owner" name="followUpOwner" /></div>
+            <div><label class="field-label" for="d-next">Next follow-up</label><input class="input" id="d-next" name="nextFollowUp" type="date" /></div>
+          </div>
+          <div><label class="field-label" for="d-notes">Internal notes</label><textarea class="input" id="d-notes" name="internalNotes" rows="3"></textarea></div>
+          <p class="field-error" data-detail-error role="alert" hidden></p>
+          <div class="flex gap-2"><button type="button" class="btn btn-primary" data-save>Save</button><button value="cancel" class="btn btn-ghost">Close</button></div>
+          <details><summary class="cursor-pointer font-semibold">Change history</summary><ul class="mt-2 space-y-1 text-sm text-muted" data-history></ul></details>
+        </form>
+      </dialog>
+    </main>
+
+    <script>
+      type Order = Record<string, any>;
+      const KEY = 'amc-admin-pw';
+      const $ = <T extends HTMLElement>(s: string) => document.querySelector<T>(s)!;
+      const esc = (s: unknown) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
+      const money = (n: number | null) => (n == null ? '—' : `$${n.toFixed(2)}`);
+      let orders: Order[] = [];
+      let current: Order | null = null;
+      const pw = () => sessionStorage.getItem(KEY) ?? '';
+      const api = (init: RequestInit = {}, q = '') => fetch(`/api/admin/orders${q}`, { ...init, headers: { ...(init.headers ?? {}), authorization: `Bearer ${pw()}` } });
+
+      async function load() {
+        const res = await api();
+        if (res.status === 401 || res.status === 503) {
+          sessionStorage.removeItem(KEY);
+          const msg = (await res.json().catch(() => ({}))).message ?? 'Sign-in failed';
+          const err = $('[data-login-error]'); err.textContent = msg; err.hidden = false;
+          $('[data-login]').hidden = false; $('[data-board]').hidden = true; $('[data-tools]').hidden = true;
+          return;
+        }
+        orders = (await res.json()).orders;
+        $('[data-login]').hidden = true; $('[data-board]').hidden = false; $('[data-tools]').hidden = false;
+        render();
+      }
+
+      function render() {
+        const st = $<HTMLSelectElement>('[data-filter-status]').value;
+        const q = $<HTMLInputElement>('[data-filter-q]').value.toLowerCase();
+        const rows = orders.filter((o) => (!st || o.status === st) && (!q || `${o.id} ${o.contact.name} ${o.contact.company} ${o.contact.email}`.toLowerCase().includes(q)));
+        $('[data-count]').textContent = `${rows.length} of ${orders.length} orders`;
+        $('[data-rows]').innerHTML = rows.map((o) => `
+          <tr class="border-b border-sand/70 align-top">
+            <td class="p-3"><button type="button" class="font-bold underline" data-open="${esc(o.id)}">${esc(o.id)}</button><br><span class="text-muted">${esc(new Date(o.createdAt).toLocaleString())}</span></td>
+            <td class="p-3">${esc(o.contact.name)}<br><span class="text-muted">${esc(o.contact.company || o.contact.email)}</span></td>
+            <td class="p-3">${esc(o.serviceType)}<br><span class="text-muted">${esc(o.count)} · ${esc(o.path)}</span></td>
+            <td class="p-3">${esc(o.date)}<br><span class="text-muted">${esc(o.timeWindowLabel)}</span></td>
+            <td class="p-3">${money(o.total ?? o.subtotal)}</td>
+            <td class="p-3">${esc(o.status.replace(/_/g, ' '))}<br><span class="text-muted">payment: ${esc(o.paymentStatus)}</span></td>
+            <td class="p-3">${esc(o.followUpOwner || '—')}<br><span class="text-muted">${esc(o.nextFollowUp)}</span></td>
+          </tr>`).join('') || '<tr><td class="p-6 text-muted" colspan="7">No orders match. New requests from the order builder appear here.</td></tr>';
+      }
+
+      function open(id: string) {
+        current = orders.find((o) => o.id === id) ?? null;
+        if (!current) return;
+        const o = current;
+        $('[data-detail-title]').textContent = `${o.id} · ${o.contact.name}`;
+        const line = (k: string, v: unknown) => (v ? `<p><strong>${esc(k)}:</strong> ${esc(v)}</p>` : '');
+        $('[data-detail-body]').innerHTML = [
+          line('Email', o.contact.email), line('Phone', o.contact.phone), line('Prefers', o.contact.preference),
+          line('Occasion', o.occasion), line('Fulfillment', `${o.fulfillment}, ${o.serviceLevel}`),
+          line('Address', [o.address.street, o.address.unit, o.address.city, o.address.zip].filter(Boolean).join(', ')), line('Zone', o.zone),
+          `<ul class="my-2 list-disc pl-5">${o.lines.map((l: Order) => `<li>${esc(l.qty)} × ${esc(l.label)}${l.detail ? ` — ${esc(l.detail)}` : ''} (${l.total == null ? 'quoted' : money(l.total)})</li>`).join('')}</ul>`,
+          line('Subtotal', money(o.subtotal)), line('Dietary / allergens', o.dietaryNotes), line('Access', o.accessNotes), line('Instructions', o.instructions),
+          line('Why quote', o.reasons.join(' ')), line('Source', [o.source.utm_source, o.source.utm_campaign, o.source.referrer].filter(Boolean).join(' / ')),
+          line('Marketing consent', o.consentMarketing ? 'yes' : 'no'),
+        ].join('');
+        const f = $<HTMLFormElement>('[data-detail-form]');
+        (f.elements.namedItem('status') as HTMLSelectElement).value = o.status;
+        (f.elements.namedItem('followUpOwner') as HTMLInputElement).value = o.followUpOwner;
+        (f.elements.namedItem('nextFollowUp') as HTMLInputElement).value = o.nextFollowUp;
+        (f.elements.namedItem('internalNotes') as HTMLTextAreaElement).value = o.internalNotes;
+        $('[data-history]').innerHTML = o.history.map((h: Order) => `<li>${esc(new Date(h.at).toLocaleString())} · ${esc(h.by)}: ${esc(h.change)}</li>`).join('');
+        $('[data-detail-error]').hidden = true;
+        $<HTMLDialogElement>('[data-detail]').showModal();
+      }
+
+      async function save() {
+        if (!current) return;
+        const f = $<HTMLFormElement>('[data-detail-form]');
+        const v = (n: string) => (f.elements.namedItem(n) as HTMLInputElement).value;
+        const res = await api({ method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id: current.id, status: v('status'), followUpOwner: v('followUpOwner'), nextFollowUp: v('nextFollowUp'), internalNotes: v('internalNotes') }) });
+        const body = await res.json().catch(() => ({}));
+        if (!res.ok) { const e = $('[data-detail-error]'); e.textContent = body.message ?? 'Could not save'; e.hidden = false; return; }
+        orders = orders.map((o) => (o.id === body.order.id ? body.order : o));
+        $<HTMLDialogElement>('[data-detail]').close();
+        render();
+      }
+
+      async function csv() {
+        const res = await api({}, '?format=csv');
+        if (!res.ok) return;
+        const url = URL.createObjectURL(await res.blob());
+        const a = Object.assign(document.createElement('a'), { href: url, download: `amc-orders-${new Date().toISOString().slice(0, 10)}.csv` });
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      $('[data-login]').addEventListener('submit', (e) => { e.preventDefault(); sessionStorage.setItem(KEY, $<HTMLInputElement>('#pw').value); load(); });
+      $('[data-refresh]').addEventListener('click', load);
+      $('[data-csv]').addEventListener('click', csv);
+      $('[data-logout]').addEventListener('click', () => { sessionStorage.removeItem(KEY); location.reload(); });
+      $('[data-filter-status]').addEventListener('change', render);
+      $('[data-filter-q]').addEventListener('input', render);
+      $('[data-rows]').addEventListener('click', (e) => { const b = (e.target as HTMLElement).closest<HTMLElement>('[data-open]'); if (b) open(b.dataset.open!); });
+      $('[data-save]').addEventListener('click', save);
+      if (pw()) load();
+    </script>
+  </body>
+</html>

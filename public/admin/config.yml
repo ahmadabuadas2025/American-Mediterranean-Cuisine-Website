@@ -1,0 +1,368 @@
+# Decap CMS configuration. Every save is a Git commit, which doubles as the
+# change log for menu and price edits. See docs/OWNER-GUIDE.md for setup.
+backend:
+  name: github
+  repo: ahmadabuadas2025/American-Mediterranean-Cuisine-Website
+  branch: main
+  base_url: https://api.netlify.com
+  auth_endpoint: auth
+  commit_messages:
+    create: 'Content: create {{collection}} “{{slug}}”'
+    update: 'Content: update {{collection}} “{{slug}}”'
+    delete: 'Content: delete {{collection}} “{{slug}}”'
+    uploadMedia: 'Media: upload “{{path}}”'
+    deleteMedia: 'Media: delete “{{path}}”'
+
+# Uncomment to require a review step (drafts open as pull requests with a deploy preview):
+# publish_mode: editorial_workflow
+
+site_url: /
+display_url: /
+logo_url: /favicon.svg
+media_folder: public/media/uploads
+public_folder: /media/uploads
+
+collections:
+  # ------------------------------------------------------------------ menu
+  - name: menu
+    label: Menu dishes
+    label_singular: Dish
+    description: Every tray dish. Prices here feed the menu page, the trays page and the order builder.
+    folder: src/content/menu
+    extension: json
+    format: json
+    create: true
+    slug: '{{slug}}'
+    identifier_field: name
+    summary: '{{name}} — ${{priceHalf}} / ${{priceFull}}{{approved | ternary(" ✓ approved", "")}}'
+    sortable_fields: [name, category, sortOrder]
+    fields:
+      - { name: name, label: Name, widget: string }
+      - name: category
+        label: Category
+        widget: select
+        options: [mains, salads, dips, mezze, carbs, sides]
+      - { name: description, label: Description, widget: text }
+      - { name: priceHalf, label: Half tray price ($), widget: number, value_type: float, min: 0 }
+      - { name: priceFull, label: Full tray price ($), widget: number, value_type: float, min: 0 }
+      - { name: servesHalf, label: Half tray serves (text), widget: string, default: '5–6' }
+      - { name: servesFull, label: Full tray serves (text), widget: string, default: '10–12' }
+      - { name: servingsHalf, label: Half tray servings used for estimates, widget: number, value_type: float, default: 5.5 }
+      - { name: servingsFull, label: Full tray servings used for estimates, widget: number, value_type: float, default: 11 }
+      - name: dietary
+        label: Dietary markers
+        hint: Only add a marker when the current recipe and kitchen handling support it.
+        widget: select
+        multiple: true
+        required: false
+        options: ['V', 'VG', 'GF-friendly']
+      - { name: allergenNote, label: Allergen note, widget: string, required: false }
+      - name: boxRoles
+        label: Can be chosen in boxes and packages as
+        widget: select
+        multiple: true
+        required: false
+        options:
+          - { label: Protein main, value: main }
+          - { label: Vegetarian main, value: veg-main }
+          - { label: Salad, value: salad }
+          - { label: Appetizer / mezze, value: appetizer }
+          - { label: Dip, value: dip }
+          - { label: Side, value: side }
+          - { label: Carb, value: carb }
+      - { name: available, label: Available, widget: boolean, default: true }
+      - { name: approved, label: Price approved by owner, widget: boolean, default: false }
+      - { name: sortOrder, label: Sort order, widget: number, default: 100 }
+      - { name: image, label: Photo, widget: image, required: false }
+      - { name: imageAlt, label: Photo description (alt text), widget: string, required: false }
+      - { name: illustrative, label: Photo is a placeholder or AI illustration, widget: boolean, default: true }
+
+  # -------------------------------------------------------------- packages
+  - name: packages
+    label: Packages, boxes and event tiers
+    label_singular: Package
+    folder: src/content/packages
+    extension: json
+    format: json
+    create: true
+    slug: '{{slug}}'
+    identifier_field: name
+    summary: '{{name}} ({{kind}}) — {{price}}'
+    fields:
+      - { name: name, label: Name, widget: string }
+      - name: kind
+        label: Type
+        widget: select
+        options:
+          - { label: Individual lunchbox, value: box }
+          - { label: Family box (3–5), value: family }
+          - { label: Tray package, value: tray-package }
+          - { label: Event tier, value: event-tier }
+      - { name: summary, label: Short description, widget: text }
+      - { name: price, label: Price ($) — leave empty for custom quote, widget: number, value_type: float, required: false }
+      - name: priceUnit
+        label: Price is per
+        widget: select
+        options: [box, package, guest, quote]
+      - { name: serves, label: Serves (text), widget: string, required: false }
+      - { name: servings, label: Servings used for estimates, widget: number, value_type: float, required: false }
+      - { name: minGuests, label: Minimum guests (events), widget: number, required: false }
+      - { name: traySize, label: Tray size, widget: select, options: [half, full], required: false }
+      - { name: inclusions, label: What is included, widget: list, field: { name: item, label: Item, widget: string } }
+      - name: slots
+        label: Customer choices
+        hint: Each choice lets the customer pick dishes with the matching role from the menu.
+        widget: list
+        required: false
+        fields:
+          - { name: key, label: Key (no spaces), widget: string }
+          - { name: label, label: Label shown to customers, widget: string }
+          - { name: count, label: How many to choose, widget: number, default: 1, min: 1 }
+          - name: roles
+            label: Choose from dishes marked as
+            widget: select
+            multiple: true
+            options: [main, veg-main, salad, appetizer, dip, side, carb]
+      - { name: custom, label: Custom order (always a quote), widget: boolean, default: false }
+      - { name: dietary, label: Dietary markers, widget: select, multiple: true, required: false, options: ['V', 'VG', 'GF-friendly'] }
+      - { name: featured, label: Show in “Popular offers” on the homepage, widget: boolean, default: false }
+      - { name: available, label: Available, widget: boolean, default: true }
+      - { name: approved, label: Price approved by owner, widget: boolean, default: false }
+      - { name: sortOrder, label: Sort order, widget: number, default: 100 }
+      - { name: image, label: Photo, widget: image, required: false }
+      - { name: imageAlt, label: Photo description (alt text), widget: string, required: false }
+      - { name: illustrative, label: Photo is a placeholder or AI illustration, widget: boolean, default: true }
+
+  # ------------------------------------------------------------------- faq
+  - name: faq
+    label: FAQ
+    label_singular: Question
+    folder: src/content/faq
+    extension: json
+    format: json
+    create: true
+    slug: '{{slug}}'
+    identifier_field: question
+    summary: '{{category}}: {{question}}'
+    fields:
+      - { name: question, label: Question, widget: string }
+      - name: answer
+        label: Answer
+        widget: text
+        hint: 'You can insert values from Ordering rules, e.g. {minimums.officeMeals} or {leadTimeHours.trays}.'
+      - name: category
+        label: Category
+        widget: select
+        options: [Ordering, Lead time, Delivery, Servings, Dietary, Payment, Changes, Events]
+      - { name: top, label: Show on the homepage, widget: boolean, default: false }
+      - { name: sortOrder, label: Sort order, widget: number, default: 100 }
+
+  # ----------------------------------------------------------------- pages
+  - name: pages
+    label: Pages (About, Privacy, Terms)
+    folder: src/content/pages
+    extension: md
+    format: frontmatter
+    create: false
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: description, label: Search description, widget: text }
+      - { name: draft_notice, label: Draft notice (remove once approved), widget: string, required: false }
+      - { name: updated, label: Last updated, widget: string, required: false }
+      - { name: body, label: Content, widget: markdown }
+
+  # -------------------------------------------------------------- settings
+  - name: settings
+    label: Settings
+    files:
+      - name: business
+        label: Business details and contact
+        file: src/content/settings.json
+        format: json
+        fields:
+          - { name: businessName, label: Business name, widget: string }
+          - { name: brandLine, label: Brand line, widget: string }
+          - { name: serviceAreaLabel, label: Service area, widget: string }
+          - { name: serviceAreaDetail, label: Service area detail, widget: text }
+          - { name: phone, label: Phone (leave TODO-OWNER to hide), widget: string }
+          - { name: email, label: Email (leave TODO-OWNER to hide), widget: string }
+          - name: hours
+            label: Hours
+            widget: list
+            required: false
+            fields:
+              - { name: days, label: Days, widget: string }
+              - { name: hours, label: Hours, widget: string }
+          - { name: responseExpectation, label: How quickly you reply, widget: string }
+          - name: pickup
+            label: Pickup
+            widget: object
+            fields:
+              - { name: enabled, label: Offer pickup, widget: boolean }
+              - { name: address, label: Pickup address, widget: string }
+              - { name: instructions, label: Pickup instructions, widget: text }
+          - name: socials
+            label: Social links (full URLs; leave TODO-OWNER to hide)
+            widget: object
+            fields:
+              - { name: instagram, label: Instagram, widget: string }
+              - { name: facebook, label: Facebook, widget: string }
+              - { name: tiktok, label: TikTok, widget: string }
+              - { name: googleBusinessProfile, label: Google Business Profile, widget: string }
+          - { name: pricingNotice, label: Pricing notice, widget: string }
+          - { name: showPricingNotice, label: Show pricing notice, widget: boolean }
+          - { name: dietaryMarkersStatus, label: Dietary markers status, widget: select, options: [proposed, approved] }
+          - { name: dietaryDisclaimer, label: Dietary disclaimer, widget: text }
+          - name: map
+            label: Map center
+            widget: object
+            fields:
+              - { name: lat, label: Latitude, widget: number, value_type: float }
+              - { name: lng, label: Longitude, widget: number, value_type: float }
+              - { name: zoom, label: Zoom, widget: number }
+          - name: hero
+            label: Homepage hero media
+            widget: object
+            fields:
+              - { name: videoWebm, label: Video (WebM), widget: file, required: false }
+              - { name: videoMp4, label: Video (MP4), widget: file, required: false }
+              - { name: videoMobileMp4, label: Mobile video (MP4), widget: file, required: false }
+              - { name: poster, label: Poster image, widget: image }
+              - { name: posterAlt, label: Poster description, widget: string }
+          - { name: ogImage, label: Social sharing image, widget: image }
+
+      - name: rules
+        label: Ordering rules (lead times, minimums, fees)
+        file: src/content/rules.json
+        format: json
+        fields:
+          - { name: approved, label: Rules approved by owner, widget: boolean }
+          - { name: timezone, label: Time zone, widget: string }
+          - name: leadTimeHours
+            label: Standard lead time (hours)
+            widget: object
+            fields: &perType
+              - { name: individual, label: Individual lunchbox, widget: number }
+              - { name: office, label: Office lunchboxes, widget: number }
+              - { name: family, label: Family box, widget: number }
+              - { name: trays, label: Trays, widget: number }
+              - { name: event, label: Events, widget: number }
+          - name: rushFloorHours
+            label: Shortest rush notice we consider (hours)
+            widget: object
+            fields: *perType
+          - name: rushFeePercent
+            label: Rush fee (%)
+            widget: object
+            fields:
+              - { name: min, label: From, widget: number }
+              - { name: max, label: To, widget: number }
+          - name: minimums
+            label: Minimums
+            widget: object
+            fields:
+              - { name: individualBoxes, label: Individual boxes, widget: number }
+              - { name: officeMeals, label: Office meals, widget: number }
+              - { name: officeSubtotal, label: Or office food subtotal ($), widget: number }
+              - { name: familyBoxes, label: Family boxes, widget: number }
+              - { name: trayItems, label: Trays, widget: number }
+          - name: unusualQuantity
+            label: Route to a quote above
+            widget: object
+            fields:
+              - { name: boxes, label: Boxes, widget: number }
+              - { name: familyBoxes, label: Family boxes, widget: number }
+              - { name: trays, label: Trays, widget: number }
+              - { name: eventGuests, label: Event guests, widget: number }
+          - name: setupFee
+            label: Setup fee range
+            widget: object
+            fields:
+              - { name: min, label: From ($), widget: number }
+              - { name: max, label: To ($), widget: number }
+              - { name: note, label: Note, widget: string }
+          - name: eventDeposit
+            label: Event deposit
+            widget: object
+            fields:
+              - { name: percent, label: Deposit (%), widget: number }
+              - { name: balanceDueBusinessDays, label: Balance due (business days before), widget: number }
+          - { name: taxRatePercent, label: Sales tax rate (%) — leave empty until confirmed, widget: number, value_type: float, required: false }
+          - name: timeWindows
+            label: Delivery windows
+            widget: list
+            fields:
+              - { name: start, label: Start (24h HH:MM), widget: string, pattern: ['^\d{2}:\d{2}$', 'Use HH:MM, e.g. 11:30'] }
+              - { name: label, label: Label, widget: string }
+          - { name: occasions, label: Occasions, widget: list }
+          - name: eventAddOns
+            label: Event add-ons
+            widget: list
+            fields:
+              - { name: key, label: Key, widget: string }
+              - { name: label, label: Label, widget: string }
+              - { name: note, label: Note, widget: string }
+          - { name: cancellationPolicy, label: Cancellation policy (TODO-OWNER hides it), widget: text }
+          - { name: finalCountDeadline, label: Final guest count deadline, widget: string }
+
+      - name: zones
+        label: Delivery zones
+        file: src/content/zones.json
+        format: json
+        fields:
+          - { name: approved, label: Zones approved, widget: boolean }
+          - name: zones
+            label: Zones
+            widget: list
+            fields:
+              - { name: id, label: ID, widget: string }
+              - { name: name, label: Name, widget: string }
+              - { name: description, label: Description, widget: string, required: false }
+              - { name: zips, label: ZIP codes, widget: list }
+              - { name: deliveryFee, label: Delivery fee ($), widget: number, value_type: float, required: false }
+              - { name: minimumSubtotal, label: Zone minimum ($), widget: number, value_type: float, required: false }
+          - { name: outOfZoneNote, label: Out-of-zone note, widget: text }
+
+      - name: calendar
+        label: Blackout and booked dates
+        file: src/content/calendar.json
+        format: json
+        fields:
+          - name: blackoutDates
+            label: Closed dates
+            widget: list
+            fields:
+              - { name: date, label: Date, widget: datetime, date_format: 'YYYY-MM-DD', time_format: false, format: 'YYYY-MM-DD' }
+              - { name: reason, label: Reason, widget: string, required: false }
+          - { name: fullyBookedDates, label: Fully booked dates (YYYY-MM-DD), widget: list }
+          - name: closedWeekdays
+            label: Weekdays without delivery (0 = Sunday … 6 = Saturday)
+            widget: list
+            field: { name: day, label: Day, widget: number, min: 0, max: 6 }
+
+      - name: gallery
+        label: Homepage gallery
+        file: src/content/gallery.json
+        format: json
+        fields:
+          - name: items
+            label: Photos
+            widget: list
+            fields:
+              - { name: src, label: Photo, widget: image }
+              - { name: alt, label: Description (alt text), widget: string }
+              - { name: caption, label: Caption, widget: string, required: false }
+              - { name: illustrative, label: Placeholder or AI illustration, widget: boolean, default: false }
+
+      - name: banners
+        label: Announcement banner
+        file: src/content/banners.json
+        format: json
+        fields:
+          - name: announcement
+            label: Announcement
+            widget: object
+            fields:
+              - { name: enabled, label: Show banner, widget: boolean }
+              - { name: text, label: Text, widget: string }
+              - { name: link, label: Link, widget: string, required: false }
