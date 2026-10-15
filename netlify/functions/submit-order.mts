@@ -6,7 +6,7 @@
  * only when payments are enabled; everything else is a quote request.
  */
 import type { Config } from '@netlify/functions';
-import { evaluateOrder, orderSchema } from '../../src/lib/order';
+import { addressErrors, evaluateOrder, orderSchema } from '../../src/lib/order';
 import { sendBusinessNotice, sendCustomerAck } from '../lib/email';
 import { catalog, json, nextInquiryId, paymentsEnabled, saveOrder, type OrderRecord } from '../lib/orders';
 import { createCheckoutSession } from '../lib/stripe';
@@ -28,6 +28,8 @@ export default async (req: Request) => {
   if (!parsed.success) {
     const errors: Record<string, string> = {};
     for (const i of parsed.error.issues) errors[i.path.join('.')] ??= i.message;
+    const b = body as { fulfillment?: string; address?: Record<string, string> };
+    Object.assign(errors, addressErrors(b.fulfillment ?? '', b.address ?? {}), errors);
     return json({ message: 'Please check the highlighted fields.', errors }, 422);
   }
   const order = parsed.data;

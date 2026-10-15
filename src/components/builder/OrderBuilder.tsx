@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Catalog } from '../../lib/catalog-types';
-import { evaluateOrder, formatDate, orderSchema, SERVICE_LABELS, type Evaluation } from '../../lib/order';
+import { addressErrors, evaluateOrder, formatDate, orderSchema, SERVICE_LABELS, type Evaluation } from '../../lib/order';
 import { SERVICE_TYPES, type ServiceType } from '../../lib/schemas';
 import { getSource } from '../../scripts/analytics';
 import { clearDraft, emptyDraft, fieldId, loadDraft, saveDraft, uid, type Draft } from './state';
@@ -131,7 +131,7 @@ export default function OrderBuilder({ catalog: c, paymentsEnabled }: Props) {
     const parsed = orderSchema.safeParse(toPayload(d));
     const e: Record<string, string> = {};
     if (!parsed.success) for (const i of parsed.error.issues) { const k = i.path.join('.'); if (!e[k] && !k.startsWith('lines') && k !== 'website') e[k] = i.message; }
-    return { ...e, ...serverFieldErrors };
+    return { ...addressErrors(d.fulfillment, d.address), ...e, ...serverFieldErrors };
   };
   const errors = showErrors[d.step] ? errorsFor(d.step) : serverFieldErrors;
 

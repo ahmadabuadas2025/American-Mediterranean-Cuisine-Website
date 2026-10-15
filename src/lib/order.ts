@@ -85,13 +85,25 @@ export const orderSchema = z
     website: z.string().max(0).optional().default(''),
   })
   .superRefine((o, ctx) => {
-    if (o.fulfillment === 'delivery') {
-      if (o.address.street.length < 3) ctx.addIssue({ code: 'custom', path: ['address', 'street'], message: 'Enter the delivery street address' });
-      if (o.address.city.length < 2) ctx.addIssue({ code: 'custom', path: ['address', 'city'], message: 'Enter the city' });
-      if (!/^\d{5}$/.test(o.address.zip)) ctx.addIssue({ code: 'custom', path: ['address', 'zip'], message: 'Enter a 5-digit ZIP code' });
+    for (const [k, message] of Object.entries(addressErrors(o.fulfillment, o.address))) {
+      ctx.addIssue({ code: 'custom', path: k.split('.'), message });
     }
   });
 export type OrderInput = z.infer<typeof orderSchema>;
+
+/**
+ * Delivery address rules. Kept separate because Zod skips object refinements
+ * while other fields are invalid; the builder merges these in so every
+ * problem shows at once.
+ */
+export function addressErrors(fulfillment: string, a: { street?: string; city?: string; zip?: string }) {
+  const e: Record<string, string> = {};
+  if (fulfillment !== 'delivery') return e;
+  if ((a.street ?? '').trim().length < 3) e['address.street'] = 'Enter the delivery street address';
+  if ((a.city ?? '').trim().length < 2) e['address.city'] = 'Enter the city';
+  if (!/^\d{5}$/.test((a.zip ?? '').trim())) e['address.zip'] = 'Enter a 5-digit ZIP code';
+  return e;
+}
 
 /* -------------------------------------------------------------- utilities */
 
