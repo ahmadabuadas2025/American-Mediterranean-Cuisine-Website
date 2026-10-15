@@ -28,11 +28,11 @@
     "zoom": 9
   },
   "hero": {
-    "videoWebm": "",
-    "videoMp4": "",
-    "videoMobileMp4": "",
-    "poster": "/media/placeholders/hero.svg",
-    "posterAlt": "A Mediterranean catering spread on ivory linen"
+    "videoWebm": "/media/video/hero.webm",
+    "videoMp4": "/media/video/hero.mp4",
+    "videoMobileMp4": "/media/video/hero-mobile.mp4",
+    "poster": "/media/photos/hero.webp",
+    "posterAlt": "Overhead view of a Mediterranean catering spread: chicken shawarma, hummus, tabbouleh, falafel, grilled vegetables and warm pita on ivory linen"
   },
   "ogImage": "/media/og-default.png"
 }

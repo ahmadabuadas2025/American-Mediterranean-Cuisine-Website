@@ -1,5 +1,6 @@
 ---
 import { gallery } from '../../lib/site';
+import Img from '../ui/Img.astro';
 ---
 <section class="gallery overflow-hidden" data-hscroll aria-labelledby="gallery-title">
   <div class="container-x pt-[clamp(4rem,9vw,8rem)] pb-10">
@@ -11,13 +12,13 @@ import { gallery } from '../../lib/site';
       <p class="max-w-sm text-muted">Boxed meals, trays, labels and buffet setups, as they leave the kitchen.</p>
     </div>
   </div>
-  <div class="gallery-scroller pb-[clamp(4rem,9vw,8rem)]">
+  <div class="gallery-scroller pb-[clamp(4rem,9vw,8rem)]" tabindex="0" role="region" aria-label="Kitchen photos, scroll sideways">
     <ul class="flex w-max gap-4 px-4 sm:px-7 lg:px-10" data-hscroll-track>
       {gallery.items.map((g, i) => (
         <li class:list={['group shrink-0', i % 3 === 2 ? 'w-[78vw] sm:w-[34rem]' : 'w-[62vw] sm:w-[22rem]']}>
           <figure>
             <div class:list={['media-mask', i % 3 === 2 ? 'aspect-[4/3]' : 'aspect-[3/4]']}>
-              <img src={g.src} alt={g.alt} width={i % 3 === 2 ? 1200 : 900} height={i % 3 === 2 ? 900 : 1200} loading="lazy" decoding="async" />
+              <Img src={g.src} alt={g.alt} width={i % 3 === 2 ? 1200 : 900} height={i % 3 === 2 ? 900 : 1200} sizes={i % 3 === 2 ? '(min-width: 640px) 34rem, 78vw' : '(min-width: 640px) 22rem, 62vw'} />
             </div>
             {g.caption && <figcaption class="mt-2 text-sm text-muted">{g.caption}</figcaption>}
           </figure>

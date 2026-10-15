@@ -1,0 +1,30 @@
+---
+/**
+ * Responsive image. Photos processed by scripts/process-media.mjs
+ * (/media/photos/<name>.webp) get AVIF/WebP srcsets; anything else
+ * (CMS uploads, placeholders) renders as a plain <img>.
+ */
+interface Props {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  sizes?: string;
+  class?: string;
+  loading?: 'lazy' | 'eager';
+  fetchpriority?: 'high' | 'auto';
+  [key: string]: unknown;
+}
+const { src, alt, width, height, sizes = '(min-width: 1024px) 33vw, 100vw', class: cls, loading = 'lazy', fetchpriority, ...rest } = Astro.props;
+const m = src.match(/^\/media\/photos\/([\w-]+)\.webp$/);
+const set = (ext: string) => [640, 1024, 1600].map((w) => `/media/photos/${m![1]}-${w}.${ext} ${w}w`).join(', ');
+---
+{m ? (
+  <picture style="display: contents">
+    <source type="image/avif" srcset={set('avif')} sizes={sizes} />
+    <source type="image/webp" srcset={set('webp')} sizes={sizes} />
+    <img src={src} alt={alt} width={width} height={height} loading={loading} decoding="async" fetchpriority={fetchpriority} class={cls} {...rest} />
+  </picture>
+) : (
+  <img src={src} alt={alt} width={width} height={height} loading={loading} decoding="async" fetchpriority={fetchpriority} class={cls} {...rest} />
+)}

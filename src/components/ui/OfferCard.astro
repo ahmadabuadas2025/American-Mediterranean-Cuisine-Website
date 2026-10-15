@@ -2,6 +2,7 @@
 import type { Package } from '../../lib/schemas';
 import PriceLabel from './PriceLabel.astro';
 import DietaryBadges from './DietaryBadges.astro';
+import Img from './Img.astro';
 
 interface Props { id: string; pkg: Package; href?: string; cta?: string; index?: number; headingLevel?: 'h2' | 'h3' }
 const { id, pkg, href, cta, headingLevel = 'h3' } = Astro.props;
@@ -11,7 +12,7 @@ const label = cta ?? (pkg.kind === 'event-tier' ? 'Plan this event' : pkg.custom
 ---
 <article class="group card lift flex h-full flex-col overflow-hidden" data-reveal>
   <div class="media-mask aspect-[4/3] !rounded-none">
-    {pkg.image && <img src={pkg.image} alt={pkg.imageAlt ?? ''} width="1200" height="900" loading="lazy" decoding="async" />}
+    {pkg.image && <Img src={pkg.image} alt={pkg.imageAlt ?? ''} width={1200} height={900} sizes="(min-width: 1024px) 30vw, (min-width: 768px) 45vw, 100vw" />}
   </div>
   <div class="flex flex-1 flex-col gap-4 p-6">
     <div class="flex items-start justify-between gap-4">

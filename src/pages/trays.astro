@@ -5,6 +5,7 @@ import OfferCard from '../components/ui/OfferCard.astro';
 import PricingNotice from '../components/ui/PricingNotice.astro';
 import MenuTable from '../components/ui/MenuTable.astro';
 import CtaBand from '../components/ui/CtaBand.astro';
+import LoopVideo from '../components/ui/LoopVideo.astro';
 import { getMenu, getPackages, rules } from '../lib/site';
 import { leadTimeText } from '../lib/order';
 
@@ -26,7 +27,8 @@ const groups = [
     eyebrow="Trays & meal catering"
     title="Trays that <em>feed the room.</em>"
     lede="Half trays serve about 5–6 people and full trays about 10–12. Start with a tray package, or build your own from every category and we confirm the price."
-    image="/media/placeholders/tray-package.svg"
+    image="/media/photos/gallery-2.webp"
+    imageAlt="Half trays of chicken shawarma and seasoned rice"
     primary={{ href: '/order/?type=trays', label: 'Build a tray order' }}
     secondary={{ href: '#tray-menu', label: 'See tray prices' }}
   />
@@ -44,6 +46,16 @@ const groups = [
     </div>
   </section>
 
+
+  <section class="container-x pb-20" aria-label="Packed to stay warm.">
+    <div class="grid items-center gap-8 border-t border-sand pt-12 lg:grid-cols-12">
+      <LoopVideo name="clip-pita" poster="/media/photos/clip-pita-poster.webp" label="Warm pita torn open beside a bowl of hummus" class="lg:col-span-7" />
+      <div class="lg:col-span-4 lg:col-start-9">
+        <h2 class="h-md" set:html={`Packed to <em>stay warm.</em>`} />
+        <p class="mt-3 text-muted">Pita travels wrapped so it is still soft when you open it, and hot dishes go out in covered trays.</p>
+      </div>
+    </div>
+  </section>
   <section class="bg-paper" aria-labelledby="estimator-title">
     <div class="section container-x grid gap-10 lg:grid-cols-12 lg:items-center">
       <div class="lg:col-span-5">

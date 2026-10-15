@@ -4,6 +4,7 @@ import PageHero from '../components/ui/PageHero.astro';
 import OfferCard from '../components/ui/OfferCard.astro';
 import PricingNotice from '../components/ui/PricingNotice.astro';
 import CtaBand from '../components/ui/CtaBand.astro';
+import LoopVideo from '../components/ui/LoopVideo.astro';
 import { getPackages, rules } from '../lib/site';
 
 const tiers = (await getPackages()).filter((p) => p.data.kind === 'event-tier');
@@ -23,7 +24,8 @@ const process = [
     eyebrow="Events"
     title="Bring everyone <em>to the table.</em>"
     lede="Baby showers, weddings, birthdays and community gatherings. Pick a package as a starting point and we plan the menu and service with you."
-    image="/media/placeholders/event.svg"
+    image="/media/photos/event-buffet.webp"
+    imageAlt="A buffet line with chafing dishes, grilled meats and herb salads"
     primary={{ href: '/order/?type=event', label: 'Plan your event' }}
     secondary={{ href: '/contact/?topic=event', label: 'Request a consultation' }}
   />
@@ -42,6 +44,16 @@ const process = [
     <p class="mt-6 max-w-3xl text-sm text-muted">Per-guest prices cover food. Delivery, setup, staff, rentals, gratuity and tax are listed separately in your quote. No package is all-inclusive unless your quote says exactly what is included.</p>
   </section>
 
+
+  <section class="container-x pb-20" aria-label="Set up and ready.">
+    <div class="grid items-center gap-8 border-t border-sand pt-12 lg:grid-cols-12">
+      <LoopVideo name="clip-buffet" poster="/media/photos/clip-buffet-poster.webp" label="A tray of chicken shawarma being set onto a buffet between chafing dishes" class="lg:col-span-7" />
+      <div class="lg:col-span-4 lg:col-start-9">
+        <h2 class="h-md" set:html={`Set up <em>and ready.</em>`} />
+        <p class="mt-3 text-muted">With setup, we arrange trays, chafers and serving utensils so the buffet is ready when guests arrive.</p>
+      </div>
+    </div>
+  </section>
   <section class="bg-paper" aria-labelledby="addons-title">
     <div class="section container-x grid gap-10 lg:grid-cols-12">
       <div class="lg:col-span-4">

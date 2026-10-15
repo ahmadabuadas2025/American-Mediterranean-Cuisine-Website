@@ -8,6 +8,7 @@ import ServiceMap from '../components/ui/ServiceMap.astro';
 import CtaBand from '../components/ui/CtaBand.astro';
 import HowItWorksSteps from '../components/home/HowItWorksSteps.astro';
 import Gallery from '../components/home/Gallery.astro';
+import Img from '../components/ui/Img.astro';
 import { getFaq, getMenu, getPackages, rules } from '../lib/site';
 
 const [packages, faq, menu] = await Promise.all([getPackages(), getFaq(), getMenu()]);
@@ -60,7 +61,7 @@ const needs = [
       <h2 id="format-title" class="h-lg mt-4 max-w-3xl" data-reveal-words>Trays to share, or <em>a box for everyone.</em></h2>
       <div class="mt-12 grid gap-6 lg:grid-cols-2">
         <article class="group card overflow-hidden" data-reveal>
-          <div class="media-mask aspect-[16/10] !rounded-none"><img src="/media/placeholders/tray-package.svg" alt="" width="1200" height="900" loading="lazy" decoding="async" /></div>
+          <div class="media-mask aspect-[16/10] !rounded-none"><Img src="/media/photos/tray-sizes.webp" alt="A half tray and a full tray of chicken shawarma over rice, side by side" width={1200} height={900} sizes="(min-width: 1024px) 45vw, 100vw" /></div>
           <div class="p-7">
             <h3 class="h-md">Meal catering</h3>
             <p class="mt-2 text-muted">Half and full trays of mains, salads, dips, mezze and sides, served buffet-style.</p>
@@ -80,7 +81,7 @@ const needs = [
           </div>
         </article>
         <article class="group card overflow-hidden" data-reveal>
-          <div class="media-mask aspect-[16/10] !rounded-none"><img src="/media/placeholders/box.svg" alt="" width="1200" height="900" loading="lazy" decoding="async" /></div>
+          <div class="media-mask aspect-[16/10] !rounded-none"><Img src="/media/photos/classic-box.webp" alt="An open lunchbox with chicken shawarma, Greek salad, hummus and roasted potatoes" width={1200} height={900} sizes="(min-width: 1024px) 45vw, 100vw" /></div>
           <div class="p-7">
             <h3 class="h-md">Lunchbox catering</h3>
             <p class="mt-2 text-muted">Individual boxes, each labeled, or family boxes sized for 3–5 people.</p>
@@ -132,7 +133,7 @@ const needs = [
   <section class="section container-x" aria-labelledby="office-title">
     <div class="grid items-center gap-10 lg:grid-cols-12">
       <div class="media-mask aspect-[4/5] lg:col-span-5" data-reveal>
-        <img src="/media/placeholders/office.svg" alt="" width="1200" height="1500" loading="lazy" decoding="async" class="scale-110" data-parallax="0.1" />
+        <Img src="/media/photos/office.webp" alt="Rows of labeled lunchboxes on an office conference table" width={1200} height={1500} sizes="(min-width: 1024px) 40vw, 100vw" class="scale-110" data-parallax="0.1" />
       </div>
       <div class="lg:col-span-6 lg:col-start-7">
         <p class="eyebrow">For offices</p>
@@ -166,7 +167,7 @@ const needs = [
         </div>
       </div>
       <div class="media-mask aspect-[4/5] lg:col-span-5 lg:col-start-8" data-reveal>
-        <img src="/media/placeholders/event.svg" alt="" width="1200" height="1500" loading="lazy" decoding="async" class="scale-110" data-parallax="0.1" />
+        <Img src="/media/photos/event.webp" alt="A celebration buffet with grilled skewers, Greek salad, grape leaves and hummus" width={1200} height={1500} sizes="(min-width: 1024px) 40vw, 100vw" class="scale-110" data-parallax="0.1" />
       </div>
     </div>
   </section>

@@ -10,3 +10,5 @@ playwright-report/
 src/generated/
 *.log
 .DS_Store
+.playwright-mcp/
+media-src/

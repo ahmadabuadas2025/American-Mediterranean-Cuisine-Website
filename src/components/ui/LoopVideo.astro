@@ -1,0 +1,53 @@
+---
+/**
+ * Short muted ambient loop inside a rounded mask. Shows the poster only for
+ * reduced motion or Save-Data; otherwise loads when scrolled near, with a
+ * visible pause control (WCAG 2.2.2).
+ */
+import Img from './Img.astro';
+interface Props { name: string; poster: string; label: string; class?: string }
+const { name, poster, label, class: cls } = Astro.props;
+---
+<figure class:list={['loop-video media-mask relative aspect-video', cls]} data-loop data-name={name}>
+  <Img src={poster} alt={label} width={1600} height={900} sizes="(min-width: 1024px) 50vw, 100vw" class="absolute inset-0 size-full object-cover" />
+  <video class="absolute inset-0 size-full object-cover opacity-0 transition-opacity duration-700" muted loop playsinline preload="none" aria-hidden="true"></video>
+  <button type="button" class="absolute bottom-3 right-3 inline-flex min-h-11 items-center rounded-full bg-black/40 px-4 text-sm font-semibold text-white backdrop-blur" data-loop-toggle hidden aria-pressed="false">Pause</button>
+</figure>
+
+<script>
+  function initLoops() {
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
+    if (reduced || saveData) return;
+    const mobile = matchMedia('(max-width: 767px)').matches;
+    document.querySelectorAll<HTMLElement>('[data-loop]').forEach((fig) => {
+      const video = fig.querySelector('video')!;
+      const btn = fig.querySelector<HTMLButtonElement>('[data-loop-toggle]')!;
+      const name = fig.dataset.name!;
+      let started = false;
+      let userPaused = false;
+      const start = () => {
+        if (started) return;
+        started = true;
+        const srcs: [string, string][] = mobile ? [[`/media/video/${name}-mobile.mp4`, 'video/mp4']] : [[`/media/video/${name}.webm`, 'video/webm'], [`/media/video/${name}.mp4`, 'video/mp4']];
+        srcs.forEach(([src, type]) => Object.assign(video.appendChild(document.createElement('source')), { src, type }));
+        video.load();
+        video.addEventListener('playing', () => { video.style.opacity = '1'; }, { once: true });
+        btn.hidden = false;
+      };
+      const io = new IntersectionObserver(([e]) => {
+        if (e.isIntersecting) { start(); if (!userPaused) video.play().catch(() => {}); }
+        else video.pause();
+      }, { rootMargin: '200px' });
+      io.observe(fig);
+      btn.addEventListener('click', () => {
+        userPaused = !video.paused;
+        if (userPaused) video.pause(); else video.play().catch(() => {});
+        btn.textContent = userPaused ? 'Play' : 'Pause';
+        btn.setAttribute('aria-pressed', String(userPaused));
+      });
+      document.addEventListener('astro:before-swap', () => io.disconnect(), { once: true });
+    });
+  }
+  document.addEventListener('astro:page-load', initLoops);
+</script>
