@@ -14,7 +14,7 @@ const catalog = await getCatalog();
     <h1 class="h-lg mt-4">Build your order <em>in three steps.</em></h1>
     <p class="lede mt-4">Your selections save on this device as you go. Nothing is charged or booked until we confirm.</p>
     <div class="mt-10">
-      <OrderBuilder client:load catalog={catalog} paymentsEnabled={paymentsEnabled} />
+      <OrderBuilder client:idle catalog={catalog} paymentsEnabled={paymentsEnabled} />
       <noscript>
         <p class="card p-6">The order builder needs JavaScript. You can still <a class="underline" href="/contact/">send us a message</a> with what you need.</p>
       </noscript>

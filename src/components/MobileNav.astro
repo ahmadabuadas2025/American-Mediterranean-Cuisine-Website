@@ -1,0 +1,72 @@
+---
+/**
+ * Accessible mobile menu without a framework: disclosure button + modal panel,
+ * focus trapped inside, Escape and link clicks close it, focus returns to the button.
+ */
+interface Props { links: { href: string; label: string }[]; current: string }
+const { links, current } = Astro.props;
+const isCurrent = (href: string) => current === href || current === href.replace(/\/$/, '');
+---
+<div data-mobile-nav>
+  <button type="button" class="menu-toggle inline-flex size-12 items-center justify-center rounded-full text-olive" aria-expanded="false" aria-controls="mobile-menu" data-menu-toggle>
+    <span class="sr-only" data-menu-label>Open menu</span>
+    <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+      <path d="M4 8h16M4 16h16" data-icon-open />
+      <path d="M6 6l12 12M18 6L6 18" data-icon-close class="hidden" />
+    </svg>
+  </button>
+  <div id="mobile-menu" role="dialog" aria-modal="true" aria-label="Site menu" class="on-dark fixed inset-x-0 bottom-0 top-[var(--header-h)] z-40 overflow-y-auto bg-olive text-ivory" hidden data-menu-panel>
+    <nav aria-label="Mobile" class="container-x flex min-h-full flex-col gap-8 py-8">
+      <ul class="flex flex-col">
+        {links.map((l) => (
+          <li class="border-b border-white/15">
+            <a href={l.href} aria-current={isCurrent(l.href) ? 'page' : undefined} class="flex min-h-14 items-center justify-between font-display text-3xl text-ivory aria-[current=page]:italic">
+              {l.label}<span aria-hidden="true" class="text-xl opacity-70">→</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <div class="flex flex-col gap-3 sm:flex-row">
+        <a href="/order/" class="btn btn-primary">Build an Order</a>
+        <a href="/order/?type=event" class="btn btn-ghost">Plan an Event</a>
+      </div>
+    </nav>
+  </div>
+</div>
+
+<script>
+  function initMobileNav() {
+    const root = document.querySelector<HTMLElement>('[data-mobile-nav]');
+    if (!root) return;
+    const btn = root.querySelector<HTMLButtonElement>('[data-menu-toggle]')!;
+    const panel = root.querySelector<HTMLElement>('[data-menu-panel]')!;
+    const label = root.querySelector<HTMLElement>('[data-menu-label]')!;
+    const focusables = () => [btn, ...panel.querySelectorAll<HTMLElement>('a, button')];
+
+    const setOpen = (open: boolean, restoreFocus = true) => {
+      panel.hidden = !open;
+      btn.setAttribute('aria-expanded', String(open));
+      label.textContent = open ? 'Close menu' : 'Open menu';
+      root.querySelector('[data-icon-open]')!.classList.toggle('hidden', open);
+      root.querySelector('[data-icon-close]')!.classList.toggle('hidden', !open);
+      document.documentElement.style.overflow = open ? 'hidden' : '';
+      if (open) panel.querySelector<HTMLElement>('a')?.focus();
+      else if (restoreFocus) btn.focus();
+    };
+    btn.addEventListener('click', () => setOpen(panel.hasAttribute('hidden')));
+    panel.addEventListener('click', (e) => { if ((e.target as Element).closest('a')) setOpen(false, false); });
+    document.addEventListener('keydown', (e) => {
+      if (panel.hasAttribute('hidden')) return;
+      if (e.key === 'Escape') setOpen(false);
+      if (e.key === 'Tab') {
+        const f = focusables();
+        const first = f[0];
+        const last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    });
+    document.addEventListener('astro:before-swap', () => { document.documentElement.style.overflow = ''; }, { once: true });
+  }
+  document.addEventListener('astro:page-load', initMobileNav);
+</script>

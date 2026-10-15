@@ -1,6 +1,6 @@
 ---
 import Logo from './Logo.astro';
-import MobileNav from './MobileNav';
+import MobileNav from './MobileNav.astro';
 import { primaryNav, secondaryNav } from '../lib/nav';
 interface Props { overlay?: boolean }
 const { overlay = false } = Astro.props;
@@ -22,7 +22,7 @@ const isActive = (href: string) => current === href || current === href.replace(
     <div class="flex items-center gap-1.5">
       <a href="/order/" class="btn btn-primary header-cta" data-track="builder_cta" data-track-location="header">Build an Order</a>
       <div class="lg:hidden">
-        <MobileNav client:media="(max-width: 1023px)" links={[...primaryNav, ...secondaryNav]} current={current} />
+        <MobileNav links={[...primaryNav, ...secondaryNav]} current={current} />
       </div>
     </div>
   </div>

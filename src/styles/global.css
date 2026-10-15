@@ -3,6 +3,33 @@
 @import '@fontsource-variable/manrope/index.css';
 @import 'tailwindcss';
 
+/* Georgia sized to Fraunces' metrics at headline optical size (~48px), so headlines barely move when the web font swaps in */
+@font-face {
+  font-family: 'Fraunces Fallback';
+  src: local('Georgia');
+  size-adjust: 102.5%;
+  ascent-override: 95.4%;
+  descent-override: 24.9%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Manrope Fallback';
+  src: local('Arial');
+  size-adjust: 105.5%;
+  ascent-override: 101%;
+  descent-override: 28.4%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Fraunces Fallback';
+  font-style: italic;
+  src: local('Georgia Italic');
+  size-adjust: 93%;
+  ascent-override: 105.1%;
+  descent-override: 27.4%;
+  line-gap-override: 0%;
+}
+
 /*
  * Brand tokens. Swap these values once the final logo colors are sampled;
  * every utility and component reads from here.
@@ -43,8 +70,8 @@
   --color-ink: var(--brand-ink);
   --color-muted: var(--brand-muted);
 
-  --font-display: 'Fraunces Variable', 'Iowan Old Style', Georgia, serif;
-  --font-sans: 'Manrope Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Fraunces Variable', 'Fraunces Fallback', Georgia, serif;
+  --font-sans: 'Manrope Variable', 'Manrope Fallback', Arial, sans-serif;
 
   --radius-card: var(--radius-card);
   --radius-media: var(--radius-media);
@@ -266,6 +293,13 @@
   .prose-amc ul { list-style: disc; padding-left: 1.25rem; }
   .prose-amc a { color: var(--brand-terracotta-deep); text-decoration: underline; text-underline-offset: 3px; }
 }
+
+/* Above-the-fold entrance: pure CSS so it never waits for JavaScript */
+@keyframes amc-rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+.enter { animation: amc-rise 0.9s cubic-bezier(.2,.8,.2,1) both; }
+.enter-2 { animation-delay: 0.08s; }
+.enter-3 { animation-delay: 0.18s; }
+.enter-4 { animation-delay: 0.3s; }
 
 /* Motion: elements animated by GSAP start visible; JS adds .js-motion to opt in. */
 .js-motion [data-reveal] { opacity: 0; transform: translateY(28px); }

@@ -17,6 +17,8 @@ export default defineConfig({
       filter: (page) => !/\/(admin|thanks|404|order\/(success|cancel))\b/.test(page),
     }),
   ],
+  // Inline the (small, gzipped ~10 KB) stylesheet to save a render-blocking round trip.
+  build: { inlineStylesheets: 'always' },
   prefetch: { prefetchAll: false, defaultStrategy: 'hover' },
   vite: { plugins: [tailwindcss()] },
 });
