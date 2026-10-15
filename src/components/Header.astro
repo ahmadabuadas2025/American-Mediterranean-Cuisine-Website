@@ -1,0 +1,70 @@
+---
+import Logo from './Logo.astro';
+import MobileNav from './MobileNav';
+import { primaryNav, secondaryNav } from '../lib/nav';
+interface Props { overlay?: boolean }
+const { overlay = false } = Astro.props;
+const current = Astro.url.pathname;
+const isActive = (href: string) => current === href || current === href.replace(/\/$/, '');
+---
+<header data-header data-overlay={overlay ? 'true' : undefined} class="site-header sticky top-0 z-50">
+  <div class="header-row container-x flex items-center justify-between gap-3">
+    <Logo />
+    <nav aria-label="Main" class="hidden lg:block">
+      <ul class="flex items-center gap-1 xl:gap-2">
+        {primaryNav.map((l) => (
+          <li>
+            <a href={l.href} aria-current={isActive(l.href) ? 'page' : undefined} class="nav-link">{l.label}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+    <div class="flex items-center gap-1.5">
+      <a href="/order/" class="btn btn-primary header-cta" data-track="builder_cta" data-track-location="header">Build an Order</a>
+      <div class="lg:hidden">
+        <MobileNav client:media="(max-width: 1023px)" links={[...primaryNav, ...secondaryNav]} current={current} />
+      </div>
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    --pad: 0.85rem;
+    background: color-mix(in srgb, var(--brand-ivory) 92%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid transparent;
+    transition: background-color 0.3s, border-color 0.3s;
+  }
+  .header-row { min-height: var(--header-h); padding-block: var(--pad); transition: padding 0.3s; }
+  .site-header[data-scrolled] { --pad: 0.35rem; border-bottom-color: var(--brand-sand); }
+  .nav-link {
+    display: inline-flex; align-items: center; min-height: 2.75rem; padding: 0 0.8rem;
+    font-weight: 600; font-size: 0.97rem; color: var(--brand-ink); text-decoration: none; border-radius: 999px;
+    background: linear-gradient(currentColor, currentColor) 50% calc(100% - 0.5rem) / 0 1.5px no-repeat;
+    transition: background-size 0.25s, color 0.2s;
+  }
+  .nav-link:hover, .nav-link[aria-current='page'] { background-size: calc(100% - 1.6rem) 1.5px; }
+  .header-cta { min-height: 2.75rem; padding-inline: 1rem; font-size: 0.95rem; }
+
+  /* Transparent over the hero video until the page scrolls */
+  .site-header[data-overlay]:not([data-scrolled]) { background: transparent; backdrop-filter: none; }
+  .site-header[data-overlay]:not([data-scrolled]) :global(.logo),
+  .site-header[data-overlay]:not([data-scrolled]) .nav-link,
+  .site-header[data-overlay]:not([data-scrolled]) :global(.menu-toggle) { color: var(--brand-ivory); }
+  .site-header[data-overlay]:not([data-scrolled]) :global(.logo-mark path) { stroke: var(--brand-olive); }
+  .site-header[data-overlay]:not([data-scrolled]) :global(.logo-mark ellipse) { fill: var(--brand-olive); }
+  .site-header[data-overlay]:not([data-scrolled]) :global(:focus-visible) { outline-color: var(--brand-ivory); }
+</style>
+
+<script>
+  function initHeader() {
+    const header = document.querySelector<HTMLElement>('[data-header]');
+    if (!header) return;
+    const update = () => header.toggleAttribute('data-scrolled', window.scrollY > 24);
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    document.addEventListener('astro:before-swap', () => window.removeEventListener('scroll', update), { once: true });
+  }
+  document.addEventListener('astro:page-load', initHeader);
+</script>

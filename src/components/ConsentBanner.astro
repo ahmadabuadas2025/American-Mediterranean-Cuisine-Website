@@ -1,0 +1,49 @@
+---
+// Shown only when an analytics provider is configured and the visitor has not chosen yet.
+const configured =
+  (import.meta.env.PUBLIC_ANALYTICS_PROVIDER === 'plausible' && !!import.meta.env.PUBLIC_PLAUSIBLE_DOMAIN) ||
+  (import.meta.env.PUBLIC_ANALYTICS_PROVIDER === 'ga4' && !!import.meta.env.PUBLIC_GA4_ID);
+---
+<div
+  data-consent
+  data-configured={configured ? 'true' : 'false'}
+  hidden
+  role="region"
+  aria-label="Analytics consent"
+  class="fixed inset-x-3 bottom-3 z-[60] mx-auto max-w-xl rounded-[var(--radius-card)] border border-sand bg-paper p-5 shadow-[0_20px_50px_-20px_rgb(31_39_21/0.5)] sm:bottom-5"
+>
+  <p class="font-semibold text-ink">Can we measure how the site is used?</p>
+  <p class="mt-1 text-sm text-muted">
+    We would like to count page visits and which menus people open, to improve ordering. We never send your name, contact details or dietary notes.
+    <a href="/privacy/" class="underline underline-offset-2">Privacy policy</a>
+  </p>
+  <div class="mt-4 flex flex-wrap gap-2">
+    <button type="button" class="btn btn-olive" data-consent-choice="granted">Allow analytics</button>
+    <button type="button" class="btn btn-ghost" data-consent-choice="denied">No thanks</button>
+  </div>
+</div>
+
+<script>
+  import { getConsent, setConsent } from '../scripts/analytics';
+  function initConsent() {
+    const box = document.querySelector<HTMLElement>('[data-consent]');
+    if (!box || box.dataset.configured !== 'true') {
+      document.querySelectorAll<HTMLElement>('[data-consent-open]').forEach((b) => (b.closest('li') ?? b).setAttribute('hidden', ''));
+      return;
+    }
+    box.hidden = getConsent() !== null;
+    box.querySelectorAll<HTMLButtonElement>('[data-consent-choice]').forEach((b) =>
+      b.addEventListener('click', () => {
+        setConsent(b.dataset.consentChoice as 'granted' | 'denied');
+        box.hidden = true;
+      }),
+    );
+    document.querySelectorAll<HTMLButtonElement>('[data-consent-open]').forEach((b) =>
+      b.addEventListener('click', () => {
+        box.hidden = false;
+        box.querySelector<HTMLButtonElement>('button')?.focus();
+      }),
+    );
+  }
+  document.addEventListener('astro:page-load', initConsent);
+</script>

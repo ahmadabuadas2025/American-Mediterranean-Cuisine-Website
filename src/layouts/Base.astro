@@ -1,0 +1,95 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import ConsentBanner from '../components/ConsentBanner.astro';
+import { banners, settings } from '../lib/site';
+import { isSet } from '../lib/schemas';
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  noindex?: boolean;
+  headerOverlay?: boolean;
+  jsonLd?: Record<string, unknown>[];
+}
+const { title, description, image = settings.ogImage, noindex = false, headerOverlay = false, jsonLd = [] } = Astro.props;
+const path = Astro.url.pathname.endsWith('/') ? Astro.url.pathname : `${Astro.url.pathname}/`;
+const canonical = new URL(path, Astro.site);
+const fullTitle = title.includes(settings.businessName) ? title : `${title} | ${settings.businessName}`;
+const ogImage = new URL(image, Astro.site).toString();
+
+// Structured data only from confirmed fields. Unset (TODO) values are omitted.
+const sameAs = Object.values(settings.socials).filter(isSet);
+const business: Record<string, unknown> = {
+  '@context': 'https://schema.org',
+  '@type': 'FoodEstablishment',
+  name: settings.businessName,
+  url: Astro.site?.toString(),
+  servesCuisine: 'Mediterranean',
+  areaServed: settings.serviceAreaLabel,
+  description: settings.brandLine,
+};
+if (isSet(settings.phone)) business.telephone = settings.phone;
+if (isSet(settings.email)) business.email = settings.email;
+if (sameAs.length) business.sameAs = sameAs;
+const schemas = [business, ...jsonLd];
+---
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="theme-color" content="#2f3a1f" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={settings.businessName} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    {schemas.map((s) => <script type="application/ld+json" set:html={JSON.stringify(s)} />)}
+    <script is:inline>
+      // Opt into scroll motion before first paint so revealed elements never flash.
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('js-motion');
+        setTimeout(function () { if (!window.__amcMotion) document.documentElement.classList.remove('js-motion'); }, 2500);
+      }
+    </script>
+    <ClientRouter fallback="swap" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    {banners.announcement.enabled && (
+      <div class="bg-olive text-ivory text-sm on-dark">
+        <div class="container-x py-2 text-center">
+          {banners.announcement.link ? <a class="underline underline-offset-4" href={banners.announcement.link}>{banners.announcement.text}</a> : banners.announcement.text}
+        </div>
+      </div>
+    )}
+    <Header overlay={headerOverlay} />
+    <main id="main" tabindex="-1" class="outline-none">
+      <slot />
+    </main>
+    <Footer />
+    <ConsentBanner />
+    <script>
+      import { initAnalytics } from '../scripts/analytics';
+      import { initMotion, teardown } from '../scripts/motion';
+      initAnalytics();
+      document.addEventListener('astro:page-load', () => {
+        (window as unknown as { __amcMotion: boolean }).__amcMotion = true;
+        initMotion().catch(() => document.documentElement.classList.remove('js-motion'));
+      });
+      document.addEventListener('astro:before-swap', teardown);
+    </script>
+  </body>
+</html>
