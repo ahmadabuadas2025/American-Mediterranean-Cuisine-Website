@@ -1,0 +1,25 @@
+{
+  "name": "Falafel",
+  "category": "mezze",
+  "description": "Crisp chickpea and herb fritters, with tahini sauce on the side.",
+  "priceHalf": 38,
+  "priceFull": 70,
+  "servesHalf": "5–6",
+  "servesFull": "10–12",
+  "servingsHalf": 5.5,
+  "servingsFull": 11,
+  "dietary": [
+    "VG"
+  ],
+  "boxRoles": [
+    "veg-main",
+    "appetizer"
+  ],
+  "available": true,
+  "approved": false,
+  "sortOrder": 160,
+  "image": "/media/placeholders/mezze.svg",
+  "imageAlt": "Illustration placeholder for Falafel",
+  "illustrative": true,
+  "allergenNote": "Contains sesame (sauce)."
+}

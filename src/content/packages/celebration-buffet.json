@@ -1,0 +1,66 @@
+{
+  "inclusions": [
+    "Expanded menu",
+    "Chafing setup",
+    "Coordinated presentation"
+  ],
+  "slots": [
+    {
+      "key": "main",
+      "label": "Mains",
+      "count": 3,
+      "roles": [
+        "main",
+        "veg-main"
+      ]
+    },
+    {
+      "key": "salad",
+      "label": "Salads",
+      "count": 2,
+      "roles": [
+        "salad"
+      ]
+    },
+    {
+      "key": "dip",
+      "label": "Dips",
+      "count": 3,
+      "roles": [
+        "dip"
+      ]
+    },
+    {
+      "key": "mezze",
+      "label": "Mezze",
+      "count": 1,
+      "roles": [
+        "appetizer"
+      ]
+    },
+    {
+      "key": "side",
+      "label": "Sides",
+      "count": 2,
+      "roles": [
+        "side",
+        "carb"
+      ]
+    }
+  ],
+  "custom": false,
+  "dietary": [],
+  "featured": false,
+  "available": true,
+  "approved": false,
+  "image": "/media/placeholders/event-tier.svg",
+  "imageAlt": "Illustration placeholder for Celebration Buffet",
+  "illustrative": true,
+  "name": "Celebration Buffet",
+  "kind": "event-tier",
+  "summary": "An expanded menu with chafing setup and coordinated presentation.",
+  "price": 29,
+  "priceUnit": "guest",
+  "minGuests": 30,
+  "sortOrder": 110
+}

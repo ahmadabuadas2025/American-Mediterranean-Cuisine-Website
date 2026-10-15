@@ -1,0 +1,52 @@
+{
+  "items": [
+    {
+      "src": "/media/placeholders/gallery-1.svg",
+      "alt": "Labeled lunchboxes ready for an office delivery",
+      "caption": "",
+      "illustrative": true
+    },
+    {
+      "src": "/media/placeholders/gallery-2.svg",
+      "alt": "Half trays of chicken shawarma and seasoned rice",
+      "caption": "",
+      "illustrative": true
+    },
+    {
+      "src": "/media/placeholders/gallery-3.svg",
+      "alt": "Hummus, baba ghanoush and muhammara with warm pita",
+      "caption": "",
+      "illustrative": true
+    },
+    {
+      "src": "/media/placeholders/gallery-4.svg",
+      "alt": "A buffet line with chafers and herb salads",
+      "caption": "",
+      "illustrative": true
+    },
+    {
+      "src": "/media/placeholders/gallery-5.svg",
+      "alt": "Falafel with tahini sauce",
+      "caption": "",
+      "illustrative": true
+    },
+    {
+      "src": "/media/placeholders/gallery-6.svg",
+      "alt": "Greek village salad in a full tray",
+      "caption": "",
+      "illustrative": true
+    },
+    {
+      "src": "/media/placeholders/gallery-7.svg",
+      "alt": "Stuffed grape leaves with lemon",
+      "caption": "",
+      "illustrative": true
+    },
+    {
+      "src": "/media/placeholders/gallery-8.svg",
+      "alt": "A family table spread for four",
+      "caption": "",
+      "illustrative": true
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "question": "How much notice do you need?",
+  "answer": "Lunchboxes and office orders need at least {leadTimeHours.office} hours. Trays need {leadTimeHours.trays} hours. Events usually need 7–14 days, and more for peak dates. Shorter notice may be possible as a rush request with a {rushFeePercent.min}–{rushFeePercent.max}% rush fee, depending on kitchen capacity.",
+  "category": "Lead time",
+  "top": true,
+  "sortOrder": 30
+}

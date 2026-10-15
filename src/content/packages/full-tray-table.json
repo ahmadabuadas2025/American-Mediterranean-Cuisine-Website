@@ -1,0 +1,69 @@
+{
+  "inclusions": [
+    "One main",
+    "One salad",
+    "One dip",
+    "One carb",
+    "One side"
+  ],
+  "slots": [
+    {
+      "key": "main",
+      "label": "Main",
+      "count": 1,
+      "roles": [
+        "main",
+        "veg-main"
+      ]
+    },
+    {
+      "key": "salad",
+      "label": "Salad",
+      "count": 1,
+      "roles": [
+        "salad"
+      ]
+    },
+    {
+      "key": "dip",
+      "label": "Dip",
+      "count": 1,
+      "roles": [
+        "dip"
+      ]
+    },
+    {
+      "key": "carb",
+      "label": "Carb",
+      "count": 1,
+      "roles": [
+        "carb"
+      ]
+    },
+    {
+      "key": "side",
+      "label": "Side",
+      "count": 1,
+      "roles": [
+        "side"
+      ]
+    }
+  ],
+  "custom": false,
+  "dietary": [],
+  "featured": false,
+  "available": true,
+  "approved": false,
+  "image": "/media/placeholders/tray-package.svg",
+  "imageAlt": "Illustration placeholder for Full-Tray Table",
+  "illustrative": true,
+  "name": "Full-Tray Table",
+  "kind": "tray-package",
+  "summary": "One main, salad, dip, carb and side in full trays. About 10–12 people.",
+  "price": 356,
+  "priceUnit": "package",
+  "serves": "10–12",
+  "servings": 11,
+  "traySize": "full",
+  "sortOrder": 80
+}

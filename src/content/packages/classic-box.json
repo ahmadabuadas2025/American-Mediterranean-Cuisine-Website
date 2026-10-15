@@ -1,0 +1,59 @@
+{
+  "inclusions": [
+    "One protein or vegetarian main",
+    "Salad or appetizer",
+    "One dip",
+    "One side"
+  ],
+  "slots": [
+    {
+      "key": "main",
+      "label": "Main",
+      "count": 1,
+      "roles": [
+        "main",
+        "veg-main"
+      ]
+    },
+    {
+      "key": "salad",
+      "label": "Salad or appetizer",
+      "count": 1,
+      "roles": [
+        "salad",
+        "appetizer"
+      ]
+    },
+    {
+      "key": "dip",
+      "label": "Dip",
+      "count": 1,
+      "roles": [
+        "dip"
+      ]
+    },
+    {
+      "key": "side",
+      "label": "Side",
+      "count": 1,
+      "roles": [
+        "side"
+      ]
+    }
+  ],
+  "custom": false,
+  "dietary": [],
+  "featured": true,
+  "available": true,
+  "approved": false,
+  "image": "/media/placeholders/box.svg",
+  "imageAlt": "Illustration placeholder for Classic Box",
+  "illustrative": true,
+  "name": "Classic Box",
+  "kind": "box",
+  "summary": "One main, a salad or appetizer, a dip and a side, in one labeled box.",
+  "price": 16.95,
+  "priceUnit": "box",
+  "serves": "1",
+  "sortOrder": 10
+}

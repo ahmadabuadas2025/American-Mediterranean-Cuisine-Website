@@ -1,0 +1,25 @@
+{
+  "name": "Grilled Vegetables",
+  "category": "sides",
+  "description": "Zucchini, peppers, onion and eggplant, grilled and dressed with herbs.",
+  "priceHalf": 42,
+  "priceFull": 78,
+  "servesHalf": "5–6",
+  "servesFull": "10–12",
+  "servingsHalf": 5.5,
+  "servingsFull": 11,
+  "dietary": [
+    "VG",
+    "GF-friendly"
+  ],
+  "boxRoles": [
+    "veg-main",
+    "side"
+  ],
+  "available": true,
+  "approved": false,
+  "sortOrder": 200,
+  "image": "/media/placeholders/sides.svg",
+  "imageAlt": "Illustration placeholder for Grilled Vegetables",
+  "illustrative": true
+}

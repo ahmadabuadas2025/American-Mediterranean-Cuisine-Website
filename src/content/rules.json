@@ -1,0 +1,115 @@
+{
+  "approved": false,
+  "timezone": "America/New_York",
+  "leadTimeHours": {
+    "individual": 24,
+    "office": 24,
+    "family": 24,
+    "trays": 48,
+    "event": 168
+  },
+  "rushFloorHours": {
+    "individual": 12,
+    "office": 12,
+    "family": 12,
+    "trays": 24,
+    "event": 72
+  },
+  "rushFeePercent": {
+    "min": 10,
+    "max": 20
+  },
+  "minimums": {
+    "individualBoxes": 1,
+    "officeMeals": 10,
+    "officeSubtotal": 175,
+    "familyBoxes": 1,
+    "trayItems": 1
+  },
+  "unusualQuantity": {
+    "boxes": 80,
+    "familyBoxes": 15,
+    "trays": 20,
+    "eventGuests": 250
+  },
+  "setupFee": {
+    "min": 65,
+    "max": 175,
+    "note": "Setup is quoted by buffet size."
+  },
+  "eventDeposit": {
+    "percent": 50,
+    "balanceDueBusinessDays": 5
+  },
+  "taxRatePercent": null,
+  "timeWindows": [
+    {
+      "start": "07:30",
+      "label": "7:30–8:30 am"
+    },
+    {
+      "start": "10:30",
+      "label": "10:30–11:30 am"
+    },
+    {
+      "start": "11:30",
+      "label": "11:30 am–12:30 pm"
+    },
+    {
+      "start": "12:30",
+      "label": "12:30–1:30 pm"
+    },
+    {
+      "start": "16:30",
+      "label": "4:30–5:30 pm"
+    },
+    {
+      "start": "17:30",
+      "label": "5:30–6:30 pm"
+    }
+  ],
+  "occasions": [
+    "Office lunch or meeting",
+    "Family meal",
+    "Birthday",
+    "Baby shower",
+    "Wedding",
+    "Community gathering",
+    "Celebration or party",
+    "Other"
+  ],
+  "eventAddOns": [
+    {
+      "key": "setup",
+      "label": "Buffet setup",
+      "note": "Quoted by buffet size"
+    },
+    {
+      "key": "staff",
+      "label": "Serving staff",
+      "note": "Quoted by role and minimum shift"
+    },
+    {
+      "key": "chafers",
+      "label": "Chafers and warming",
+      "note": "Quoted by equipment"
+    },
+    {
+      "key": "linens",
+      "label": "Linens and risers",
+      "note": "Quoted by equipment"
+    },
+    {
+      "key": "serviceware",
+      "label": "Upgraded serviceware or rentals",
+      "note": "Quoted separately"
+    },
+    {
+      "key": "tasting",
+      "label": "Paid tasting",
+      "note": "Credit policy confirmed in your quote"
+    }
+  ],
+  "cancellationPolicy": "TODO-OWNER",
+  "finalCountDeadline": "TODO-OWNER"
+}

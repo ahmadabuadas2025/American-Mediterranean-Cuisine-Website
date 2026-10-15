@@ -1,0 +1,58 @@
+{
+  "inclusions": [
+    "Complete buffet meal",
+    "Eco serviceware",
+    "Labeled delivery"
+  ],
+  "slots": [
+    {
+      "key": "main",
+      "label": "Mains",
+      "count": 2,
+      "roles": [
+        "main",
+        "veg-main"
+      ]
+    },
+    {
+      "key": "salad",
+      "label": "Salad",
+      "count": 1,
+      "roles": [
+        "salad"
+      ]
+    },
+    {
+      "key": "dip",
+      "label": "Dips",
+      "count": 2,
+      "roles": [
+        "dip"
+      ]
+    },
+    {
+      "key": "side",
+      "label": "Side",
+      "count": 1,
+      "roles": [
+        "side",
+        "carb"
+      ]
+    }
+  ],
+  "custom": false,
+  "dietary": [],
+  "featured": true,
+  "available": true,
+  "approved": false,
+  "image": "/media/placeholders/event-tier.svg",
+  "imageAlt": "Illustration placeholder for Gathering Drop-Off",
+  "illustrative": true,
+  "name": "Gathering Drop-Off",
+  "kind": "event-tier",
+  "summary": "A complete buffet meal, eco serviceware and labeled delivery.",
+  "price": 21,
+  "priceUnit": "guest",
+  "minGuests": 20,
+  "sortOrder": 100
+}

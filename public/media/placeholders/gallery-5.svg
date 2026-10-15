@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" width="900" height="1200" preserveAspectRatio="xMidYMid slice">
+  <rect width="900" height="1200" fill="#e3e6cd"/>
+  <path d="M0 744 Q 450 600 900 792 V 1200 H 0 Z" fill="#c9cfa6" opacity=".45"/>
+  <circle cx="467.9493959172088" cy="686.7789918147358" r="266.7031913357386" fill="#fbf8f0"/>
+  <circle cx="467.9493959172088" cy="686.7789918147358" r="208.02848924187612" fill="#c9cfa6" opacity=".55"/>
+  <circle cx="414.6087576500611" cy="660.1086726811619" r="85.34502122743636" fill="#2f3a1f" opacity=".55"/>
+  <circle cx="534.6251937511435" cy="734.7855662551688" r="69.34282974729204" fill="#b8693f" opacity=".45"/>
+  <circle cx="653.59199438207" cy="426.58134607474796" r="112.01534036101022" fill="#fbf8f0"/>
+  <circle cx="653.59199438207" cy="426.58134607474796" r="78.41073825270715" fill="#b8693f" opacity=".35"/>
+  <circle cx="244.98711837035717" cy="914.2809147335206" r="90.67908505415113" fill="#fbf8f0"/>
+  <circle cx="244.98711837035717" cy="914.2809147335206" r="61.66177783682277" fill="#2f3a1f" opacity=".35"/>
+  <g fill="#2f3a1f" opacity=".7" transform="translate(720 936) rotate(-26.186863896107543)">
+    <path d="M0 0 L 240.03287220216475 0" stroke="#2f3a1f" stroke-width="3"/>
+    <ellipse cx="66.67579783393465" cy="-10" rx="7" ry="18" transform="rotate(60 66.67579783393465 -10)"/>
+    <ellipse cx="133.3515956678693" cy="10" rx="7" ry="18" transform="rotate(-60 133.3515956678693 10)"/>
+    <ellipse cx="200.02739350180394" cy="-10" rx="7" ry="18" transform="rotate(60 200.02739350180394 -10)"/>
+  </g>
+</svg>

@@ -1,0 +1,7 @@
+{
+  "question": "How do I place an order?",
+  "answer": "Use the order builder: choose what you need, build your package, then add delivery details. Standard orders with confirmed availability can be paid online once online payment is switched on. Everything else becomes a quote request, and we reply with an itemized price before you pay anything.",
+  "category": "Ordering",
+  "top": true,
+  "sortOrder": 10
+}

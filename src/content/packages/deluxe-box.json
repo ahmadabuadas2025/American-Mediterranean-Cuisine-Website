@@ -1,0 +1,59 @@
+{
+  "inclusions": [
+    "Two mains",
+    "Salad",
+    "Appetizer",
+    "Two dips",
+    "Rice and warm pita"
+  ],
+  "slots": [
+    {
+      "key": "main",
+      "label": "Mains",
+      "count": 2,
+      "roles": [
+        "main",
+        "veg-main"
+      ]
+    },
+    {
+      "key": "salad",
+      "label": "Salad",
+      "count": 1,
+      "roles": [
+        "salad"
+      ]
+    },
+    {
+      "key": "appetizer",
+      "label": "Appetizer",
+      "count": 1,
+      "roles": [
+        "appetizer"
+      ]
+    },
+    {
+      "key": "dip",
+      "label": "Dips",
+      "count": 2,
+      "roles": [
+        "dip"
+      ]
+    }
+  ],
+  "custom": false,
+  "dietary": [],
+  "featured": true,
+  "available": true,
+  "approved": false,
+  "image": "/media/placeholders/box.svg",
+  "imageAlt": "Illustration placeholder for Deluxe Box",
+  "illustrative": true,
+  "name": "Deluxe Box",
+  "kind": "box",
+  "summary": "Two mains, salad, appetizer, two dips, rice and warm pita.",
+  "price": 20.95,
+  "priceUnit": "box",
+  "serves": "1",
+  "sortOrder": 20
+}

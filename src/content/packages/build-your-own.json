@@ -1,0 +1,21 @@
+{
+  "inclusions": [
+    "Choose from mains, salads, dips, mezze, carbs and sides",
+    "Delivery, setup, staffing, rentals and tax quoted separately"
+  ],
+  "slots": [],
+  "custom": true,
+  "dietary": [],
+  "featured": false,
+  "available": true,
+  "approved": false,
+  "image": "/media/placeholders/tray-package.svg",
+  "imageAlt": "Illustration placeholder for Build Your Own",
+  "illustrative": true,
+  "name": "Build Your Own",
+  "kind": "tray-package",
+  "summary": "Pick half or full trays from every category. We confirm the final price with you.",
+  "price": null,
+  "priceUnit": "quote",
+  "sortOrder": 90
+}

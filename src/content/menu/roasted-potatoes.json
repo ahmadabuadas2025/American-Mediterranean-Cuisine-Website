@@ -1,0 +1,24 @@
+{
+  "name": "Roasted Potatoes",
+  "category": "sides",
+  "description": "Lemon-garlic potatoes roasted until the edges crisp.",
+  "priceHalf": 34,
+  "priceFull": 62,
+  "servesHalf": "5–6",
+  "servesFull": "10–12",
+  "servingsHalf": 5.5,
+  "servingsFull": 11,
+  "dietary": [
+    "VG",
+    "GF-friendly"
+  ],
+  "boxRoles": [
+    "side"
+  ],
+  "available": true,
+  "approved": false,
+  "sortOrder": 190,
+  "image": "/media/placeholders/sides.svg",
+  "imageAlt": "Illustration placeholder for Roasted Potatoes",
+  "illustrative": true
+}

@@ -1,0 +1,7 @@
+{
+  "question": "Is there a minimum for office delivery?",
+  "answer": "Office delivery starts at {minimums.officeMeals} meals or a ${minimums.officeSubtotal} food subtotal. Some delivery zones may have their own minimum, which we show before you commit.",
+  "category": "Ordering",
+  "top": false,
+  "sortOrder": 40
+}

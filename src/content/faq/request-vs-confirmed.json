@@ -1,0 +1,7 @@
+{
+  "question": "What is the difference between “request received” and “order confirmed”?",
+  "answer": "“Request received” means we have your details and will reply with a quote or confirmation. Your order is only confirmed once we have confirmed the date and, where needed, your payment has gone through. We never treat a request as a booked order.",
+  "category": "Ordering",
+  "top": true,
+  "sortOrder": 20
+}

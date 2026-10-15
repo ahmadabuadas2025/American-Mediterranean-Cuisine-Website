@@ -1,0 +1,7 @@
+{
+  "question": "When do I pay?",
+  "answer": "For standard orders with online payment enabled, you pay at checkout. For quotes and events, we send an itemized quote and a payment link once you approve it. We never ask for card details in a contact form.",
+  "category": "Payment",
+  "top": false,
+  "sortOrder": 110
+}

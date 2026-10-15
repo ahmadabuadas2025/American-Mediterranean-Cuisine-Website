@@ -1,0 +1,14 @@
+{
+  "approved": false,
+  "zones": [
+    {
+      "id": "zone-1",
+      "name": "TODO-OWNER: core delivery zone",
+      "description": "",
+      "zips": [],
+      "deliveryFee": null,
+      "minimumSubtotal": null
+    }
+  ],
+  "outOfZoneNote": "Outside our standard zones? Send a request anyway. We quote longer distances and difficult access individually."
+}

@@ -1,0 +1,7 @@
+{
+  "question": "Do events need a deposit?",
+  "answer": "Events are proposed to require a {eventDeposit.percent}% deposit to hold the date, with the balance due {eventDeposit.balanceDueBusinessDays} business days before the event. Final terms are in your quote.",
+  "category": "Payment",
+  "top": false,
+  "sortOrder": 120
+}

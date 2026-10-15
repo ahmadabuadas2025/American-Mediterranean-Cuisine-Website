@@ -1,0 +1,7 @@
+{
+  "announcement": {
+    "enabled": false,
+    "text": "Now taking holiday office lunch orders.",
+    "link": "/order?type=office"
+  }
+}

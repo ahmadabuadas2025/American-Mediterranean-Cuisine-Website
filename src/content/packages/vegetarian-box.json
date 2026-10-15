@@ -1,0 +1,60 @@
+{
+  "inclusions": [
+    "Falafel or grilled vegetables",
+    "Mezze",
+    "One dip",
+    "One side"
+  ],
+  "slots": [
+    {
+      "key": "main",
+      "label": "Vegetarian main",
+      "count": 1,
+      "roles": [
+        "veg-main"
+      ]
+    },
+    {
+      "key": "mezze",
+      "label": "Mezze",
+      "count": 1,
+      "roles": [
+        "appetizer",
+        "salad"
+      ]
+    },
+    {
+      "key": "dip",
+      "label": "Dip",
+      "count": 1,
+      "roles": [
+        "dip"
+      ]
+    },
+    {
+      "key": "side",
+      "label": "Side",
+      "count": 1,
+      "roles": [
+        "side"
+      ]
+    }
+  ],
+  "custom": false,
+  "dietary": [
+    "V"
+  ],
+  "featured": false,
+  "available": true,
+  "approved": false,
+  "image": "/media/placeholders/box.svg",
+  "imageAlt": "Illustration placeholder for Vegetarian Box",
+  "illustrative": true,
+  "name": "Vegetarian Box",
+  "kind": "box",
+  "summary": "Falafel or grilled vegetables with mezze, a dip and a side.",
+  "price": 16.95,
+  "priceUnit": "box",
+  "serves": "1",
+  "sortOrder": 30
+}

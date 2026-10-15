@@ -1,0 +1,68 @@
+{
+  "inclusions": [
+    "Two protein or vegetarian mains",
+    "Mezze",
+    "Salad",
+    "Two dips",
+    "Side"
+  ],
+  "slots": [
+    {
+      "key": "main",
+      "label": "Mains",
+      "count": 2,
+      "roles": [
+        "main",
+        "veg-main"
+      ]
+    },
+    {
+      "key": "mezze",
+      "label": "Mezze",
+      "count": 1,
+      "roles": [
+        "appetizer"
+      ]
+    },
+    {
+      "key": "salad",
+      "label": "Salad",
+      "count": 1,
+      "roles": [
+        "salad"
+      ]
+    },
+    {
+      "key": "dip",
+      "label": "Dips",
+      "count": 2,
+      "roles": [
+        "dip"
+      ]
+    },
+    {
+      "key": "side",
+      "label": "Side",
+      "count": 1,
+      "roles": [
+        "side"
+      ]
+    }
+  ],
+  "custom": false,
+  "dietary": [],
+  "featured": false,
+  "available": true,
+  "approved": false,
+  "image": "/media/placeholders/family.svg",
+  "imageAlt": "Illustration placeholder for Family Feast",
+  "illustrative": true,
+  "name": "Family Feast",
+  "kind": "family",
+  "summary": "Serves 3–5 with two mains, mezze, salad, dips and a side.",
+  "price": 109,
+  "priceUnit": "package",
+  "serves": "3–5",
+  "servings": 4,
+  "sortOrder": 50
+}

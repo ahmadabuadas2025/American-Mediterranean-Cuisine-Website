@@ -1,0 +1,25 @@
+{
+  "name": "Greek Village Salad",
+  "category": "salads",
+  "description": "Tomato, cucumber, pepper, red onion, olives and feta with oregano vinaigrette.",
+  "priceHalf": 40,
+  "priceFull": 74,
+  "servesHalf": "5–6",
+  "servesFull": "10–12",
+  "servingsHalf": 5.5,
+  "servingsFull": 11,
+  "dietary": [
+    "V",
+    "GF-friendly"
+  ],
+  "boxRoles": [
+    "salad"
+  ],
+  "available": true,
+  "approved": false,
+  "sortOrder": 60,
+  "image": "/media/placeholders/salads.svg",
+  "imageAlt": "Illustration placeholder for Greek Village Salad",
+  "illustrative": true,
+  "allergenNote": "Contains dairy (feta)."
+}

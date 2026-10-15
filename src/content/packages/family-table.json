@@ -1,0 +1,68 @@
+{
+  "inclusions": [
+    "One main",
+    "Appetizer",
+    "Salad",
+    "Two dips",
+    "Generous side"
+  ],
+  "slots": [
+    {
+      "key": "main",
+      "label": "Main",
+      "count": 1,
+      "roles": [
+        "main",
+        "veg-main"
+      ]
+    },
+    {
+      "key": "appetizer",
+      "label": "Appetizer",
+      "count": 1,
+      "roles": [
+        "appetizer"
+      ]
+    },
+    {
+      "key": "salad",
+      "label": "Salad",
+      "count": 1,
+      "roles": [
+        "salad"
+      ]
+    },
+    {
+      "key": "dip",
+      "label": "Dips",
+      "count": 2,
+      "roles": [
+        "dip"
+      ]
+    },
+    {
+      "key": "side",
+      "label": "Side",
+      "count": 1,
+      "roles": [
+        "side"
+      ]
+    }
+  ],
+  "custom": false,
+  "dietary": [],
+  "featured": true,
+  "available": true,
+  "approved": false,
+  "image": "/media/placeholders/family.svg",
+  "imageAlt": "Illustration placeholder for Family Table",
+  "illustrative": true,
+  "name": "Family Table",
+  "kind": "family",
+  "summary": "Serves 3–5: a main, appetizer, salad, dips and a generous side.",
+  "price": 89,
+  "priceUnit": "package",
+  "serves": "3–5",
+  "servings": 4,
+  "sortOrder": 40
+}

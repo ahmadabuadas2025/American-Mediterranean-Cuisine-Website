@@ -1,0 +1,24 @@
+{
+  "name": "Stuffed Grape Leaves",
+  "category": "mezze",
+  "description": "Grape leaves rolled around herbed rice, served with lemon.",
+  "priceHalf": 44,
+  "priceFull": 82,
+  "servesHalf": "5–6",
+  "servesFull": "10–12",
+  "servingsHalf": 5.5,
+  "servingsFull": 11,
+  "dietary": [
+    "VG",
+    "GF-friendly"
+  ],
+  "boxRoles": [
+    "appetizer"
+  ],
+  "available": true,
+  "approved": false,
+  "sortOrder": 180,
+  "image": "/media/placeholders/mezze.svg",
+  "imageAlt": "Illustration placeholder for Stuffed Grape Leaves",
+  "illustrative": true
+}

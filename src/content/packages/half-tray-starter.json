@@ -1,0 +1,69 @@
+{
+  "inclusions": [
+    "One main",
+    "One salad",
+    "One dip",
+    "One carb",
+    "One side"
+  ],
+  "slots": [
+    {
+      "key": "main",
+      "label": "Main",
+      "count": 1,
+      "roles": [
+        "main",
+        "veg-main"
+      ]
+    },
+    {
+      "key": "salad",
+      "label": "Salad",
+      "count": 1,
+      "roles": [
+        "salad"
+      ]
+    },
+    {
+      "key": "dip",
+      "label": "Dip",
+      "count": 1,
+      "roles": [
+        "dip"
+      ]
+    },
+    {
+      "key": "carb",
+      "label": "Carb",
+      "count": 1,
+      "roles": [
+        "carb"
+      ]
+    },
+    {
+      "key": "side",
+      "label": "Side",
+      "count": 1,
+      "roles": [
+        "side"
+      ]
+    }
+  ],
+  "custom": false,
+  "dietary": [],
+  "featured": true,
+  "available": true,
+  "approved": false,
+  "image": "/media/placeholders/tray-package.svg",
+  "imageAlt": "Illustration placeholder for Half-Tray Starter",
+  "illustrative": true,
+  "name": "Half-Tray Starter",
+  "kind": "tray-package",
+  "summary": "One main, salad, dip, carb and side in half trays. About 5–6 people.",
+  "price": 196,
+  "priceUnit": "package",
+  "serves": "5–6",
+  "servings": 5.5,
+  "traySize": "half",
+  "sortOrder": 70
+}

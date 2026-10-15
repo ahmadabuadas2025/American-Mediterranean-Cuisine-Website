@@ -1,0 +1,14 @@
+{
+  "blackoutDates": [
+    {
+      "date": "2026-12-25",
+      "reason": "Closed for the holiday"
+    },
+    {
+      "date": "2027-01-01",
+      "reason": "Closed for the holiday"
+    }
+  ],
+  "fullyBookedDates": [],
+  "closedWeekdays": []
+}

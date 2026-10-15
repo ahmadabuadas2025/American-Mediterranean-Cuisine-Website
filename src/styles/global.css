@@ -1,0 +1,287 @@
+@import '@fontsource-variable/fraunces/opsz.css';
+@import '@fontsource-variable/fraunces/opsz-italic.css';
+@import '@fontsource-variable/manrope/index.css';
+@import 'tailwindcss';
+
+/*
+ * Brand tokens. Swap these values once the final logo colors are sampled;
+ * every utility and component reads from here.
+ */
+:root {
+  --brand-ivory: #f6f1e4;
+  --brand-paper: #fcf9f2;
+  --brand-sand: #dccba8;
+  --brand-sand-soft: #ece2cb;
+  --brand-olive: #2f3a1f;
+  --brand-olive-deep: #1f2715;
+  --brand-olive-mid: #4b5a2e;
+  --brand-olive-soft: #e3e6cd;
+  --brand-terracotta: #a3472a;
+  --brand-terracotta-deep: #843820;
+  --brand-terracotta-soft: #f3dfd3;
+  --brand-ink: #1e2317;
+  --brand-muted: #545a45;
+  --brand-focus: #a3472a;
+
+  --radius-card: 1.25rem;
+  --radius-media: 1.5rem;
+  --header-h: 4.5rem;
+}
+
+@theme inline {
+  --color-ivory: var(--brand-ivory);
+  --color-paper: var(--brand-paper);
+  --color-sand: var(--brand-sand);
+  --color-sand-soft: var(--brand-sand-soft);
+  --color-olive: var(--brand-olive);
+  --color-olive-deep: var(--brand-olive-deep);
+  --color-olive-mid: var(--brand-olive-mid);
+  --color-olive-soft: var(--brand-olive-soft);
+  --color-terracotta: var(--brand-terracotta);
+  --color-terracotta-deep: var(--brand-terracotta-deep);
+  --color-terracotta-soft: var(--brand-terracotta-soft);
+  --color-ink: var(--brand-ink);
+  --color-muted: var(--brand-muted);
+
+  --font-display: 'Fraunces Variable', 'Iowan Old Style', Georgia, serif;
+  --font-sans: 'Manrope Variable', ui-sans-serif, system-ui, sans-serif;
+
+  --radius-card: var(--radius-card);
+  --radius-media: var(--radius-media);
+}
+
+@layer base {
+  html {
+    background: var(--brand-ivory);
+    color: var(--brand-ink);
+    font-family: var(--font-sans);
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    scroll-padding-top: calc(var(--header-h) + 1rem);
+  }
+  body {
+    background: var(--brand-ivory);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    min-height: 100dvh;
+    overflow-x: clip;
+  }
+  h1, h2, h3, .display {
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+    font-weight: 420;
+    line-height: 1.04;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+    color: var(--brand-olive);
+  }
+  h1 em, h2 em, h3 em, .display em {
+    font-style: italic;
+    font-weight: 360;
+    color: var(--brand-olive-mid);
+  }
+  p { text-wrap: pretty; }
+  ::selection { background: var(--brand-olive); color: var(--brand-ivory); }
+
+  :focus-visible {
+    outline: 3px solid var(--brand-focus);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+  .on-dark :focus-visible, .on-dark:focus-visible { outline-color: var(--brand-ivory); }
+
+  [hidden] { display: none !important; }
+}
+
+@layer components {
+  .container-x {
+    width: 100%;
+    max-width: 82rem;
+    margin-inline: auto;
+    padding-inline: 1rem;
+  }
+  @media (min-width: 640px) { .container-x { padding-inline: 1.75rem; } }
+  @media (min-width: 1024px) { .container-x { padding-inline: 2.5rem; } }
+
+  .section { padding-block: clamp(4rem, 9vw, 8rem); }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6em;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--brand-olive-mid);
+  }
+  .eyebrow::before {
+    content: '◆';
+    font-size: 0.6em;
+    color: var(--brand-terracotta);
+  }
+  .on-dark .eyebrow, .eyebrow.on-dark { color: var(--brand-olive-soft); }
+  .on-dark .eyebrow::before { color: #e9a98e; }
+
+  .h-xl { font-size: clamp(2.75rem, 7.2vw, 6.25rem); }
+  .h-lg { font-size: clamp(2.25rem, 5vw, 4.25rem); }
+  .h-md { font-size: clamp(1.75rem, 3.2vw, 2.75rem); }
+  .h-sm { font-size: clamp(1.35rem, 2vw, 1.65rem); line-height: 1.15; }
+  .lede { font-size: clamp(1.1rem, 1.6vw, 1.3rem); color: var(--brand-muted); max-width: 38rem; }
+
+  /* Buttons: 48px tall minimum for touch */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    min-height: 3rem;
+    padding: 0.75rem 1.4rem;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 1rem;
+    line-height: 1.1;
+    text-decoration: none;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s, transform 0.2s;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn:active { transform: translateY(1px); }
+  .btn-primary { background: var(--brand-terracotta); color: #fff; }
+  .btn-primary:hover { background: var(--brand-terracotta-deep); }
+  .btn-olive { background: var(--brand-olive); color: var(--brand-ivory); }
+  .btn-olive:hover { background: var(--brand-olive-deep); }
+  .btn-ghost { border: 1.5px solid currentColor; color: var(--brand-olive); background: transparent; }
+  .btn-ghost:hover { background: var(--brand-olive); color: var(--brand-ivory); border-color: var(--brand-olive); }
+  .on-dark .btn-ghost { color: var(--brand-ivory); }
+  .on-dark .btn-ghost:hover { background: var(--brand-ivory); color: var(--brand-olive); border-color: var(--brand-ivory); }
+  .btn[disabled], .btn[aria-disabled='true'] { opacity: 0.55; cursor: not-allowed; }
+
+  /* Text CTA with a sliding arrow */
+  .link-arrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    font-weight: 700;
+    color: var(--brand-terracotta-deep);
+    text-decoration: none;
+  }
+  .on-dark .link-arrow { color: #f0bca5; }
+  .link-arrow .arrow { display: inline-block; transition: transform 0.25s cubic-bezier(.2,.8,.2,1); }
+  .link-arrow:hover .arrow, .link-arrow:focus-visible .arrow, .group:hover .link-arrow .arrow { transform: translateX(0.35rem); }
+  .link-arrow .label { background: linear-gradient(currentColor, currentColor) 0 100% / 0 1.5px no-repeat; transition: background-size 0.3s; }
+  .link-arrow:hover .label { background-size: 100% 1.5px; }
+
+  .card {
+    background: var(--brand-paper);
+    border: 1px solid var(--brand-sand-soft);
+    border-radius: var(--radius-card);
+  }
+  .lift { transition: transform 0.35s cubic-bezier(.2,.8,.2,1), box-shadow 0.35s; }
+  .lift:hover { transform: translateY(-4px); box-shadow: 0 18px 40px -24px rgb(47 58 31 / 0.45); }
+
+  .media-mask { overflow: hidden; border-radius: var(--radius-media); background: var(--brand-sand-soft); }
+  .media-mask img, .media-mask video { width: 100%; height: 100%; object-fit: cover; transition: transform 0.9s cubic-bezier(.2,.8,.2,1); }
+  .group:hover .media-mask img { transform: scale(1.045); }
+
+  /*
+   * Market label: the brand's one decorative device, borrowed from deli and
+   * lunchbox labels. Used for prices and the order ticket only.
+   */
+  .market-label {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    padding: 0.55rem 0.9rem 0.6rem 1.35rem;
+    background: var(--brand-ivory);
+    border: 1.5px solid var(--brand-olive);
+    border-radius: 0.5rem 0.9rem 0.9rem 0.5rem;
+    color: var(--brand-olive);
+    line-height: 1.15;
+  }
+  .market-label::before {
+    content: '';
+    position: absolute;
+    left: 0.45rem;
+    top: 50%;
+    width: 0.4rem;
+    height: 0.4rem;
+    margin-top: -0.2rem;
+    border-radius: 50%;
+    border: 1.5px solid var(--brand-olive);
+    background: var(--brand-paper);
+  }
+  .market-label .price { font-family: var(--font-display); font-size: 1.5rem; font-weight: 500; font-variant-numeric: lining-nums tabular-nums; }
+  .market-label .unit { font-size: 0.8rem; font-weight: 600; color: var(--brand-muted); }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.15rem 0.55rem;
+    border: 1px solid var(--brand-olive-mid);
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--brand-olive);
+    background: transparent;
+  }
+  .badge-proposed { border-style: dashed; }
+
+  .field-label { display: block; font-weight: 700; font-size: 0.95rem; margin-bottom: 0.35rem; color: var(--brand-ink); }
+  .field-hint { font-size: 0.875rem; color: var(--brand-muted); }
+  .field-error { font-size: 0.9rem; font-weight: 600; color: #8f2d14; margin-top: 0.35rem; }
+  .input {
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.7rem 0.9rem;
+    border: 1.5px solid #857858;
+    border-radius: 0.75rem;
+    background: #fff;
+    color: var(--brand-ink);
+    font: inherit;
+  }
+  .input:hover { border-color: var(--brand-olive-mid); }
+  .input:focus-visible { outline: 3px solid var(--brand-focus); outline-offset: 1px; border-color: var(--brand-olive); }
+  .input[aria-invalid='true'] { border-color: #8f2d14; box-shadow: inset 0 0 0 1px #8f2d14; }
+  textarea.input { min-height: 6rem; }
+
+  .rule { border: 0; border-top: 1px solid var(--brand-sand); }
+
+  .skip-link {
+    position: absolute;
+    left: 1rem;
+    top: -4rem;
+    z-index: 100;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    background: var(--brand-olive);
+    color: var(--brand-ivory);
+    font-weight: 700;
+  }
+  .skip-link:focus { top: 1rem; }
+
+  .prose-amc { max-width: 42rem; }
+  .prose-amc h2 { font-size: 1.75rem; margin: 2.25rem 0 0.75rem; }
+  .prose-amc p, .prose-amc ul { margin: 0 0 1rem; }
+  .prose-amc ul { list-style: disc; padding-left: 1.25rem; }
+  .prose-amc a { color: var(--brand-terracotta-deep); text-decoration: underline; text-underline-offset: 3px; }
+}
+
+/* Motion: elements animated by GSAP start visible; JS adds .js-motion to opt in. */
+.js-motion [data-reveal] { opacity: 0; transform: translateY(28px); }
+.js-motion [data-reveal-words] .word { display: inline-block; opacity: 0; transform: translateY(0.4em); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .js-motion [data-reveal], .js-motion [data-reveal-words] .word { opacity: 1; transform: none; }
+}
+
+/* Lenis */
+html.lenis, html.lenis body { height: auto; }
+.lenis:not(.lenis-autoToggle).lenis-stopped { overflow: clip; }
+.lenis.lenis-smooth iframe { pointer-events: none; }

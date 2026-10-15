@@ -1,0 +1,38 @@
+{
+  "businessName": "American Mediterranean Cuisine",
+  "brandLine": "Freshly prepared. Generously shared.",
+  "serviceAreaLabel": "Tampa Bay, Florida",
+  "serviceAreaDetail": "Delivery zones and fees are being finalized. Enter your ZIP in the order builder and we confirm delivery for your address.",
+  "phone": "TODO-OWNER",
+  "email": "TODO-OWNER",
+  "hours": [],
+  "responseExpectation": "TODO-OWNER",
+  "pickup": {
+    "enabled": true,
+    "address": "TODO-OWNER",
+    "instructions": "Pickup details are confirmed with your order."
+  },
+  "socials": {
+    "instagram": "TODO-OWNER",
+    "facebook": "TODO-OWNER",
+    "tiktok": "TODO-OWNER",
+    "googleBusinessProfile": "TODO-OWNER"
+  },
+  "pricingNotice": "Concept pricing, subject to confirmation.",
+  "showPricingNotice": true,
+  "dietaryMarkersStatus": "proposed",
+  "dietaryDisclaimer": "Dietary markers depend on the current recipe and our kitchen’s cross-contact controls. Our kitchen handles wheat, dairy, tree nuts and sesame. GF-friendly is not a medical guarantee. Ask us about allergens before ordering.",
+  "map": {
+    "lat": 27.9506,
+    "lng": -82.4572,
+    "zoom": 9
+  },
+  "hero": {
+    "videoWebm": "",
+    "videoMp4": "",
+    "videoMobileMp4": "",
+    "poster": "/media/placeholders/hero.svg",
+    "posterAlt": "A Mediterranean catering spread on ivory linen"
+  },
+  "ogImage": "/media/og-default.png"
+}

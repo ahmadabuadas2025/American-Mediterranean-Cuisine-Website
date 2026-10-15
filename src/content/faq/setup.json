@@ -1,0 +1,7 @@
+{
+  "question": "Can you set up the food for us?",
+  "answer": "Yes. Setup is an add-on, usually ${setupFee.min}–${setupFee.max}+ depending on buffet size. Staff, chafers, linens, risers and rentals are quoted by role, equipment and minimum shift.",
+  "category": "Delivery",
+  "top": false,
+  "sortOrder": 70
+}

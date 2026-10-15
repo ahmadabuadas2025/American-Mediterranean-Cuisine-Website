@@ -1,0 +1,29 @@
+{
+  "inclusions": [
+    "Falafel",
+    "Grilled vegetables",
+    "Tabbouleh",
+    "Hummus",
+    "Baba ghanoush",
+    "Seasoned rice"
+  ],
+  "slots": [],
+  "custom": false,
+  "dietary": [
+    "V"
+  ],
+  "featured": false,
+  "available": true,
+  "approved": false,
+  "image": "/media/placeholders/family.svg",
+  "imageAlt": "Illustration placeholder for Plant-Full Box",
+  "illustrative": true,
+  "name": "Plant-Full Box",
+  "kind": "family",
+  "summary": "Serves 3–5: falafel and grilled vegetables, tabbouleh, hummus, baba ghanoush and rice.",
+  "price": 82,
+  "priceUnit": "package",
+  "serves": "3–5",
+  "servings": 4,
+  "sortOrder": 60
+}

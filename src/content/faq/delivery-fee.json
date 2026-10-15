@@ -1,0 +1,7 @@
+{
+  "question": "How much is delivery?",
+  "answer": "Delivery is priced by zone and order size. You see the exact fee before you pay. If we cannot price your address automatically, your order becomes a quote request and we confirm the fee with you.",
+  "category": "Delivery",
+  "top": false,
+  "sortOrder": 60
+}

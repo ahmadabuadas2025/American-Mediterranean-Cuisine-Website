@@ -1,0 +1,21 @@
+{
+  "name": "Chicken Shawarma",
+  "category": "mains",
+  "description": "Marinated chicken thigh, roasted and sliced thin, with pickled onion and garlic sauce on the side.",
+  "priceHalf": 62,
+  "priceFull": 112,
+  "servesHalf": "5–6",
+  "servesFull": "10–12",
+  "servingsHalf": 5.5,
+  "servingsFull": 11,
+  "dietary": [],
+  "boxRoles": [
+    "main"
+  ],
+  "available": true,
+  "approved": false,
+  "sortOrder": 10,
+  "image": "/media/placeholders/mains.svg",
+  "imageAlt": "Illustration placeholder for Chicken Shawarma",
+  "illustrative": true
+}

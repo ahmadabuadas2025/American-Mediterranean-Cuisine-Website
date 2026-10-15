@@ -1,0 +1,25 @@
+{
+  "name": "Baba Ghanoush",
+  "category": "dips",
+  "description": "Smoky roasted eggplant with tahini and lemon.",
+  "priceHalf": 40,
+  "priceFull": 74,
+  "servesHalf": "5–6",
+  "servesFull": "10–12",
+  "servingsHalf": 5.5,
+  "servingsFull": 11,
+  "dietary": [
+    "VG",
+    "GF-friendly"
+  ],
+  "boxRoles": [
+    "dip"
+  ],
+  "available": true,
+  "approved": false,
+  "sortOrder": 130,
+  "image": "/media/placeholders/dips.svg",
+  "imageAlt": "Illustration placeholder for Baba Ghanoush",
+  "illustrative": true,
+  "allergenNote": "Contains sesame."
+}
