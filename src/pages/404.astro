@@ -1,0 +1,22 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="Page not found" description="This page could not be found." noindex>
+  <section class="container-x section">
+    <p class="eyebrow">404</p>
+    <h1 class="h-xl mt-5 max-w-4xl">This page has <em>left the kitchen.</em></h1>
+    <p class="lede mt-6">The link may be old or mistyped. Here are the places most people are looking for.</p>
+    <ul class="mt-10 grid max-w-3xl gap-x-10 sm:grid-cols-2">
+      {[
+        ['/order/', 'Build an order'],
+        ['/menu/', 'See the menu and prices'],
+        ['/lunchboxes/', 'Lunchboxes and family boxes'],
+        ['/trays/', 'Trays and meal catering'],
+        ['/events/', 'Event catering'],
+        ['/contact/', 'Contact us'],
+      ].map(([href, label]) => (
+        <li class="border-b border-sand"><a href={href} class="link-arrow w-full justify-between py-3"><span class="label">{label}</span><span class="arrow" aria-hidden="true">→</span></a></li>
+      ))}
+    </ul>
+  </section>
+</Base>

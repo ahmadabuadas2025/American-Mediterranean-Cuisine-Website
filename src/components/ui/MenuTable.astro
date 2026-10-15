@@ -1,0 +1,35 @@
+---
+/** Real-HTML price table for tray menu categories (searchable by search engines). */
+import type { MenuItem } from '../../lib/schemas';
+import DietaryBadges from './DietaryBadges.astro';
+
+interface Props { title: string; items: { id: string; data: MenuItem }[] }
+const { title, items } = Astro.props;
+const fmt = (n: number) => n.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 });
+const slug = title.toLowerCase().replace(/[^a-z]+/g, '-');
+---
+<div class="card overflow-hidden" data-reveal>
+  <table class="w-full border-collapse text-left" aria-labelledby={`t-${slug}`}>
+    <caption id={`t-${slug}`} class="bg-olive-soft/60 px-5 py-4 text-left font-display text-2xl text-olive">{title}</caption>
+    <thead>
+      <tr class="border-b border-sand text-sm text-muted">
+        <th scope="col" class="px-5 py-3 font-semibold">Dish</th>
+        <th scope="col" class="px-3 py-3 text-right font-semibold">Half <span class="hidden sm:inline">(5–6)</span></th>
+        <th scope="col" class="px-5 py-3 text-right font-semibold">Full <span class="hidden sm:inline">(10–12)</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      {items.map((m) => (
+        <tr class="border-b border-sand/70 align-top last:border-0">
+          <th scope="row" class="px-5 py-4 font-normal">
+            <a href={`/order/?type=trays&item=${m.id}`} class="font-semibold text-ink underline-offset-4 hover:underline" data-track="menu_item_selected" data-track-item={m.id}>{m.data.name}</a>
+            <p class="mt-1 text-sm text-muted">{m.data.description}</p>
+            <div class="mt-2"><DietaryBadges tags={m.data.dietary} /></div>
+          </th>
+          <td class="px-3 py-4 text-right font-semibold tabular-nums">{fmt(m.data.priceHalf)}</td>
+          <td class="px-5 py-4 text-right font-semibold tabular-nums">{fmt(m.data.priceFull)}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>

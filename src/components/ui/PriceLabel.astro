@@ -1,0 +1,15 @@
+---
+/** Market-label price tag. All prices come from content; nothing is typed here. */
+interface Props { price: number | null; unit: 'box' | 'package' | 'guest' | 'quote' | 'half' | 'full'; prefix?: string; class?: string }
+const { price, unit, prefix = 'From', class: cls } = Astro.props;
+const fmt = (n: number) => n.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: n % 1 ? 2 : 0 });
+const unitText = { box: 'per box', package: 'per package', guest: 'per guest', quote: 'priced on request', half: 'half tray', full: 'full tray' }[unit];
+---
+<span class:list={['market-label', cls]}>
+  {price == null ? (
+    <span class="price">Custom</span>
+  ) : (
+    <span class="price"><span class="sr-only">{prefix} </span>{fmt(price)}</span>
+  )}
+  <span class="unit">{unitText}</span>
+</span>

@@ -1,0 +1,40 @@
+---
+import { gallery } from '../../lib/site';
+---
+<section class="gallery overflow-hidden" data-hscroll aria-labelledby="gallery-title">
+  <div class="container-x pt-[clamp(4rem,9vw,8rem)] pb-10">
+    <div class="flex flex-wrap items-end justify-between gap-6">
+      <div>
+        <p class="eyebrow">From the kitchen</p>
+        <h2 id="gallery-title" class="h-lg mt-4" data-reveal-words>Fresh from <em>our kitchen.</em></h2>
+      </div>
+      <p class="max-w-sm text-muted">Boxed meals, trays, labels and buffet setups, as they leave the kitchen.</p>
+    </div>
+  </div>
+  <div class="gallery-scroller pb-[clamp(4rem,9vw,8rem)]">
+    <ul class="flex w-max gap-4 px-4 sm:px-7 lg:px-10" data-hscroll-track>
+      {gallery.items.map((g, i) => (
+        <li class:list={['group shrink-0', i % 3 === 2 ? 'w-[78vw] sm:w-[34rem]' : 'w-[62vw] sm:w-[22rem]']}>
+          <figure>
+            <div class:list={['media-mask', i % 3 === 2 ? 'aspect-[4/3]' : 'aspect-[3/4]']}>
+              <img src={g.src} alt={g.alt} width={i % 3 === 2 ? 1200 : 900} height={i % 3 === 2 ? 900 : 1200} loading="lazy" decoding="async" />
+            </div>
+            {g.caption && <figcaption class="mt-2 text-sm text-muted">{g.caption}</figcaption>}
+          </figure>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  /* Native, swipeable scroll on small screens; GSAP pins and scrubs it on wider ones */
+  @media (max-width: 767px) {
+    .gallery-scroller { overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    .gallery-scroller li { scroll-snap-align: center; }
+  }
+  @media (min-width: 768px) {
+    .gallery-scroller { overflow-x: auto; }
+    :global(.js-motion) .gallery-scroller { overflow: visible; }
+  }
+</style>

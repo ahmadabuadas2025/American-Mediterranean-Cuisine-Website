@@ -1,0 +1,62 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/ui/PageHero.astro';
+import HowItWorksSteps from '../components/home/HowItWorksSteps.astro';
+import CtaBand from '../components/ui/CtaBand.astro';
+import { rules, settings } from '../lib/site';
+import { isSet } from '../lib/schemas';
+import { SERVICE_LABELS, leadTimeLabel } from '../lib/order';
+import type { ServiceType } from '../lib/schemas';
+
+const types = Object.keys(SERVICE_LABELS) as ServiceType[];
+---
+<Base
+  title="How Catering Orders Work | Delivery, Quotes & Timing"
+  description="How ordering Mediterranean catering in Tampa Bay works: choose, create, deliver. Lead times, delivery and pickup, quotes and payment explained."
+>
+  <PageHero
+    eyebrow="How it works"
+    title="Clear choices, <em>dependable timing.</em>"
+    lede="Every order follows the same three steps. Here is what happens at each one, how much notice we need and when you pay."
+    primary={{ href: '/order/', label: 'Build an Order' }}
+    secondary={{ href: '/order/?type=event', label: 'Plan an Event' }}
+  />
+
+  <HowItWorksSteps />
+
+  <section class="section container-x grid gap-12 lg:grid-cols-2" aria-label="Details">
+    <div>
+      <h2 class="h-md">Request received, or <em>order confirmed?</em></h2>
+      <div class="mt-6 grid gap-4">
+        <div class="card p-6">
+          <p class="font-bold text-ink">Request received</p>
+          <p class="mt-1 text-muted">You sent us an order or event request. You get an inquiry number by email. We check the date, delivery and menu, then send an itemized quote or confirmation. Nothing is booked or charged yet.</p>
+        </div>
+        <div class="card border-olive-mid p-6">
+          <p class="font-bold text-ink">Order confirmed</p>
+          <p class="mt-1 text-muted">We have confirmed your date and, where needed, your payment has gone through. You get an order confirmation with the final items, time, address and any balance due.</p>
+        </div>
+      </div>
+      <p class="mt-4 text-sm text-muted">Online checkout is used only for standard packages on available dates. Custom trays, events, rush orders and deliveries outside our zones always get a quote first.</p>
+    </div>
+    <div>
+      <h2 class="h-md">How much <em>notice?</em></h2>
+      <table class="mt-6 w-full border-collapse text-left">
+        <caption class="sr-only">Standard lead times by order type</caption>
+        <thead><tr class="border-b border-sand text-sm text-muted"><th scope="col" class="py-3 font-semibold">Order type</th><th scope="col" class="py-3 text-right font-semibold">Standard notice</th></tr></thead>
+        <tbody>
+          {types.map((t) => (
+            <tr class="border-b border-sand/70"><th scope="row" class="py-4 font-semibold">{SERVICE_LABELS[t]}</th><td class="py-4 text-right">{t === 'event' ? '7–14 days' : leadTimeLabel(rules.leadTimeHours[t])}</td></tr>
+          ))}
+        </tbody>
+      </table>
+      <p class="mt-4 text-sm text-muted">Shorter notice can sometimes work as a rush request, with a {rules.rushFeePercent.min}–{rules.rushFeePercent.max}% rush fee if we accept it. Peak dates fill early.</p>
+
+      <h2 class="h-md mt-12">Delivery <em>or pickup.</em></h2>
+      <p class="mt-4 text-muted">We deliver across {settings.serviceAreaLabel}. Delivery is priced by zone and order size, and you see the fee before you pay. Longer distances and difficult access are quoted.</p>
+      <p class="mt-3 text-muted">{settings.pickup.enabled ? (isSet(settings.pickup.address) ? `Pickup is available at ${settings.pickup.address}. ${settings.pickup.instructions}` : settings.pickup.instructions) : 'Pickup is not currently offered.'}</p>
+    </div>
+  </section>
+
+  <CtaBand />
+</Base>

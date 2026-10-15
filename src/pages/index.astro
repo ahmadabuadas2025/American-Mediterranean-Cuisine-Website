@@ -1,0 +1,192 @@
+---
+import Base from '../layouts/Base.astro';
+import HeroVideo from '../components/home/HeroVideo.astro';
+import OfferCard from '../components/ui/OfferCard.astro';
+import PricingNotice from '../components/ui/PricingNotice.astro';
+import FaqList from '../components/ui/FaqList.astro';
+import ServiceMap from '../components/ui/ServiceMap.astro';
+import CtaBand from '../components/ui/CtaBand.astro';
+import HowItWorksSteps from '../components/home/HowItWorksSteps.astro';
+import Gallery from '../components/home/Gallery.astro';
+import { getFaq, getMenu, getPackages, rules } from '../lib/site';
+
+const [packages, faq, menu] = await Promise.all([getPackages(), getFaq(), getMenu()]);
+const featured = packages.filter((p) => p.data.featured);
+const topFaq = faq.filter((f) => f.data.top).slice(0, 5);
+const officeOccasion = rules.minimums;
+
+const needs = [
+  { n: '01', type: 'individual', title: 'Individuals', text: 'A labeled lunchbox for one, or a family box when you are feeding 3–5 at home.', cta: 'Build a box' },
+  { n: '02', type: 'office', title: 'Companies & Offices', text: `Team lunches and meetings, from ${officeOccasion.officeMeals} boxes, each labeled by name or order.`, cta: 'Build an office order' },
+  { n: '03', type: 'event', title: 'Events & Bigger Crowds', text: 'Showers, birthdays, weddings and community gatherings, with buffet setup if you need it.', cta: 'Plan an event' },
+];
+---
+<Base
+  title="Mediterranean Catering in Tampa Bay | Lunchboxes, Trays & Events"
+  description="Mediterranean catering for Tampa Bay: labeled lunchboxes, half and full trays, family boxes and event buffets. See what is included and build your order in three steps."
+  headerOverlay
+>
+  <HeroVideo />
+
+  <!-- 2. Choose your need -->
+  <section class="section container-x" aria-labelledby="need-title">
+    <div class="grid gap-6 lg:grid-cols-12 lg:items-end">
+      <div class="lg:col-span-7">
+        <p class="eyebrow">Who is eating</p>
+        <h2 id="need-title" class="h-lg mt-4" data-reveal-words>Start with <em>who you’re feeding.</em></h2>
+      </div>
+      <p class="lede lg:col-span-5" data-reveal>
+        Choose your need and the order builder opens with the right options, minimums and lead times. Our menu has <span data-count-to={menu.length}>{menu.length}</span> dishes to build from.
+      </p>
+    </div>
+    <ol class="mt-12 grid gap-4 md:grid-cols-3">
+      {needs.map((n) => (
+        <li data-reveal>
+          <a href={`/order/?type=${n.type}`} class="group card lift flex h-full min-h-72 flex-col p-7" data-track="service_card_selected" data-track-service-type={n.type}>
+            <span class="font-display text-5xl italic text-terracotta" aria-hidden="true">{n.n}</span>
+            <h3 class="h-sm mt-auto pt-10">{n.title}</h3>
+            <p class="mt-2 text-muted">{n.text}</p>
+            <span class="link-arrow mt-4"><span class="label">{n.cta}</span><span class="arrow" aria-hidden="true">→</span></span>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <!-- 3. Choose your format -->
+  <section class="bg-olive-soft/60" aria-labelledby="format-title">
+    <div class="section container-x">
+      <p class="eyebrow">Two ways to cater</p>
+      <h2 id="format-title" class="h-lg mt-4 max-w-3xl" data-reveal-words>Trays to share, or <em>a box for everyone.</em></h2>
+      <div class="mt-12 grid gap-6 lg:grid-cols-2">
+        <article class="group card overflow-hidden" data-reveal>
+          <div class="media-mask aspect-[16/10] !rounded-none"><img src="/media/placeholders/tray-package.svg" alt="" width="1200" height="900" loading="lazy" decoding="async" /></div>
+          <div class="p-7">
+            <h3 class="h-md">Meal catering</h3>
+            <p class="mt-2 text-muted">Half and full trays of mains, salads, dips, mezze and sides, served buffet-style.</p>
+            <dl class="mt-6 grid grid-cols-2 gap-3">
+              <div class="rounded-2xl border border-sand p-4">
+                <dt class="text-sm font-semibold text-muted">Half tray</dt>
+                <dd class="font-display text-3xl text-olive">5–6 <span class="font-sans text-base text-muted">people</span></dd>
+                <dd aria-hidden="true" class="mt-2 flex gap-1">{Array.from({ length: 6 }).map((_, i) => <span class:list={['size-2.5 rounded-full', i < 5 ? 'bg-olive-mid' : 'bg-olive-mid/40']} />)}</dd>
+              </div>
+              <div class="rounded-2xl border border-sand p-4">
+                <dt class="text-sm font-semibold text-muted">Full tray</dt>
+                <dd class="font-display text-3xl text-olive">10–12 <span class="font-sans text-base text-muted">people</span></dd>
+                <dd aria-hidden="true" class="mt-2 flex flex-wrap gap-1">{Array.from({ length: 12 }).map((_, i) => <span class:list={['size-2.5 rounded-full', i < 10 ? 'bg-olive-mid' : 'bg-olive-mid/40']} />)}</dd>
+              </div>
+            </dl>
+            <a href="/trays/" class="link-arrow mt-6"><span class="label">See trays and serving estimates</span><span class="arrow" aria-hidden="true">→</span></a>
+          </div>
+        </article>
+        <article class="group card overflow-hidden" data-reveal>
+          <div class="media-mask aspect-[16/10] !rounded-none"><img src="/media/placeholders/box.svg" alt="" width="1200" height="900" loading="lazy" decoding="async" /></div>
+          <div class="p-7">
+            <h3 class="h-md">Lunchbox catering</h3>
+            <p class="mt-2 text-muted">Individual boxes, each labeled, or family boxes sized for 3–5 people.</p>
+            <dl class="mt-6 grid grid-cols-2 gap-3">
+              <div class="rounded-2xl border border-sand p-4">
+                <dt class="text-sm font-semibold text-muted">Single box</dt>
+                <dd class="font-display text-3xl text-olive">1 <span class="font-sans text-base text-muted">person</span></dd>
+                <dd aria-hidden="true" class="mt-2 flex gap-1"><span class="size-2.5 rounded-full bg-olive-mid" /></dd>
+              </div>
+              <div class="rounded-2xl border border-sand p-4">
+                <dt class="text-sm font-semibold text-muted">Family box</dt>
+                <dd class="font-display text-3xl text-olive">3–5 <span class="font-sans text-base text-muted">people</span></dd>
+                <dd aria-hidden="true" class="mt-2 flex gap-1">{Array.from({ length: 5 }).map((_, i) => <span class:list={['size-2.5 rounded-full', i < 3 ? 'bg-olive-mid' : 'bg-olive-mid/40']} />)}</dd>
+              </div>
+            </dl>
+            <a href="/lunchboxes/" class="link-arrow mt-6"><span class="label">Compare lunchboxes</span><span class="arrow" aria-hidden="true">→</span></a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Popular offers -->
+  <section class="section container-x" aria-labelledby="offers-title">
+    <div class="flex flex-wrap items-end justify-between gap-6">
+      <div>
+        <p class="eyebrow">Popular offers</p>
+        <h2 id="offers-title" class="h-lg mt-4" data-reveal-words>Where most orders <em>begin.</em></h2>
+      </div>
+      <PricingNotice />
+    </div>
+    <div class="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+      {featured.map((p) => <OfferCard id={p.id} pkg={p.data} />)}
+      <div class="flex flex-col justify-end rounded-[var(--radius-card)] border border-dashed border-olive-mid p-7" data-reveal>
+        <p class="font-display text-2xl text-olive">Need something else?</p>
+        <p class="mt-2 text-muted">Browse every dish with half and full tray prices, or build your own tray order.</p>
+        <a href="/menu/" class="link-arrow mt-4"><span class="label">See the full menu</span><span class="arrow" aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Three steps -->
+  <HowItWorksSteps />
+
+  <!-- 6. Gallery -->
+  <Gallery />
+
+  <!-- 7. Office CTA -->
+  <section class="section container-x" aria-labelledby="office-title">
+    <div class="grid items-center gap-10 lg:grid-cols-12">
+      <div class="media-mask aspect-[4/5] lg:col-span-5" data-reveal>
+        <img src="/media/placeholders/office.svg" alt="" width="1200" height="1500" loading="lazy" decoding="async" class="scale-110" data-parallax="0.1" />
+      </div>
+      <div class="lg:col-span-6 lg:col-start-7">
+        <p class="eyebrow">For offices</p>
+        <h2 id="office-title" class="h-lg mt-4" data-reveal-words>Office lunch, <em>solved.</em></h2>
+        <ul class="mt-8 divide-y divide-sand border-y border-sand" data-reveal>
+          <li class="py-4"><strong class="text-ink">Labeled boxes.</strong> <span class="text-muted">Every box is labeled, so nobody opens six lids to find theirs.</span></li>
+          <li class="py-4"><strong class="text-ink">Simple minimum.</strong> <span class="text-muted">Office delivery starts at {rules.minimums.officeMeals} meals or ${rules.minimums.officeSubtotal} in food.</span></li>
+          <li class="py-4"><strong class="text-ink">Mixed preferences.</strong> <span class="text-muted">Choose the protein or vegetarian main box by box, and tell us about allergies up front.</span></li>
+          <li class="py-4"><strong class="text-ink">Recurring favorites.</strong> <span class="text-muted">Ordering every week? Ask us to set up a standing order for your team.</span></li>
+        </ul>
+        <a href="/order/?type=office" class="btn btn-primary mt-8" data-track="service_card_selected" data-track-service-type="office">Build an office order</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. Event CTA -->
+  <section class="on-dark bg-olive text-ivory" aria-labelledby="event-title">
+    <div class="section container-x grid items-center gap-10 lg:grid-cols-12">
+      <div class="lg:col-span-6">
+        <p class="eyebrow">For events</p>
+        <h2 id="event-title" class="h-lg mt-4 text-ivory [&_em]:text-olive-soft" data-reveal-words>Bring everyone <em>to the table.</em></h2>
+        <p class="mt-6 max-w-lg text-lg text-olive-soft" data-reveal>Drop-off buffets from 20 guests, chafing setup for celebrations and fully planned signature events. Tell us the date and headcount and we send an itemized quote.</p>
+        <ul class="mt-8 flex flex-wrap gap-2" aria-label="Events we cater" data-reveal>
+          {['Baby showers', 'Weddings', 'Birthdays', 'Community gatherings', 'Office celebrations'].map((o) => (
+            <li class="rounded-full border border-white/25 px-4 py-2 text-sm font-semibold">{o}</li>
+          ))}
+        </ul>
+        <div class="mt-8 flex flex-wrap gap-3" data-reveal>
+          <a href="/order/?type=event" class="btn btn-primary" data-track="event_cta" data-track-location="home_event">Plan your event</a>
+          <a href="/events/" class="btn btn-ghost">See event packages</a>
+        </div>
+      </div>
+      <div class="media-mask aspect-[4/5] lg:col-span-5 lg:col-start-8" data-reveal>
+        <img src="/media/placeholders/event.svg" alt="" width="1200" height="1500" loading="lazy" decoding="async" class="scale-110" data-parallax="0.1" />
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. Service area + FAQ -->
+  <section class="section container-x" aria-labelledby="area-title">
+    <div class="grid gap-12 lg:grid-cols-12">
+      <div class="lg:col-span-5">
+        <p class="eyebrow">Where we deliver</p>
+        <h2 id="area-title" class="h-lg mt-4" data-reveal-words>Serving <em>Tampa Bay.</em></h2>
+        <div class="mt-8" data-reveal><ServiceMap /></div>
+      </div>
+      <div class="lg:col-span-6 lg:col-start-7">
+        <h2 class="h-md">Questions people ask first</h2>
+        <div class="mt-6"><FaqList items={topFaq} /></div>
+        <a href="/faq/" class="link-arrow mt-6"><span class="label">All FAQs and policies</span><span class="arrow" aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10. Closing band -->
+  <CtaBand />
+</Base>

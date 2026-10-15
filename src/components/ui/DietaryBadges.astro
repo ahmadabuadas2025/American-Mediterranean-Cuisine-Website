@@ -1,0 +1,17 @@
+---
+import { settings } from '../../lib/site';
+interface Props { tags: string[] }
+const { tags } = Astro.props;
+const names: Record<string, string> = { V: 'Vegetarian', VG: 'Vegan', 'GF-friendly': 'Gluten-friendly' };
+const proposed = settings.dietaryMarkersStatus !== 'approved';
+---
+{tags.length > 0 && (
+  <ul class="flex flex-wrap gap-1.5" aria-label="Dietary markers">
+    {tags.map((t) => (
+      <li>
+        <abbr class:list={['badge no-underline', proposed && 'badge-proposed']} title={`${names[t] ?? t}${proposed ? ' (proposed, pending kitchen review)' : ''}`}>{t}</abbr>
+        <span class="sr-only">{names[t] ?? t}{proposed ? ', proposed' : ''}</span>
+      </li>
+    ))}
+  </ul>
+)}

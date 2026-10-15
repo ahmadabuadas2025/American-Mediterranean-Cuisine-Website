@@ -1,0 +1,42 @@
+---
+interface Props { headingLevel?: 'h1' | 'h2' }
+const { headingLevel = 'h2' } = Astro.props;
+const H = headingLevel;
+const steps = [
+  { n: '01', verb: 'Choose', title: 'Choose your catering style and need', text: 'Lunchbox, family box, trays or an event. Tell us the date, the headcount and whether you want delivery or pickup.' },
+  { n: '02', verb: 'Create', title: 'Create your food package', text: 'Start from a curated package, then pick mains, salads, dips and sides. Prices and serving estimates update as you go.' },
+  { n: '03', verb: 'Deliver', title: 'Set location and timing, then confirm', text: 'Add the address and any dietary notes. Standard orders can be paid online when available; everything else gets an itemized quote first.' },
+];
+---
+<section class="steps bg-paper" data-pin-steps aria-labelledby="steps-title">
+  <div class="section container-x grid gap-10 md:grid-cols-12 md:items-center">
+    <div class="md:col-span-5">
+      <p class="eyebrow">How it works</p>
+      <H id="steps-title" class="h-lg mt-4">Choose, create, <em>deliver.</em></H>
+      <p class="lede mt-6">Three steps from “we need lunch for twelve” to a confirmed order.</p>
+      <div class="mt-8 hidden h-[3px] w-full max-w-sm overflow-hidden rounded bg-sand md:block" aria-hidden="true">
+        <div class="h-full origin-left scale-x-0 bg-terracotta" data-step-progress></div>
+      </div>
+      <a href="/order/" class="btn btn-primary mt-8" data-track="builder_cta" data-track-location="steps">Start step one</a>
+    </div>
+    <ol class="flex flex-col gap-4 md:col-span-6 md:col-start-7">
+      {steps.map((s) => (
+        <li class="step card p-7" data-step>
+          <div class="flex items-baseline gap-4">
+            <span class="font-display text-4xl italic text-terracotta" aria-hidden="true">{s.n}</span>
+            <span class="font-display text-3xl text-olive">{s.verb}</span>
+          </div>
+          <h3 class="mt-3 font-sans text-lg font-bold text-ink">{s.title}</h3>
+          <p class="mt-2 text-muted">{s.text}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  @media (min-width: 768px) {
+    .js-motion .step { opacity: 0.38; transform: scale(0.98); transition: opacity 0.4s, transform 0.4s, border-color 0.4s, background-color 0.4s; }
+    .js-motion .step[data-active] { opacity: 1; transform: none; border-color: var(--brand-olive-mid); background: #fff; }
+  }
+</style>

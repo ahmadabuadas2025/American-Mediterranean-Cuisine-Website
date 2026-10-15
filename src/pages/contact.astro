@@ -1,0 +1,154 @@
+---
+import Base from '../layouts/Base.astro';
+import { rules, settings } from '../lib/site';
+import { isSet } from '../lib/schemas';
+
+const tel = isSet(settings.phone) ? settings.phone.replace(/[^\d+]/g, '') : '';
+---
+<Base
+  title="Contact & Event Consultation | Tampa Bay Catering"
+  description="Contact American Mediterranean Cuisine about catering in Tampa Bay, request an event consultation or ask an allergen question."
+>
+  <section class="container-x pt-10 pb-24 md:pt-16">
+    <div class="grid gap-14 lg:grid-cols-12">
+      <div class="lg:col-span-5">
+        <p class="eyebrow">Contact</p>
+        <h1 class="h-xl mt-5" data-reveal-words>Let’s talk <em>food.</em></h1>
+        <p class="lede mt-6">Questions, allergen checks or an event to plan. For a standard order, the order builder is the quickest route.</p>
+        <a href="/order/" class="link-arrow mt-4"><span class="label">Build an order instead</span><span class="arrow" aria-hidden="true">→</span></a>
+
+        <dl class="mt-10 grid gap-6">
+          {tel && <div><dt class="text-sm font-semibold text-muted">Phone</dt><dd><a href={`tel:${tel}`} class="font-display text-2xl text-olive">{settings.phone}</a></dd></div>}
+          {isSet(settings.email) && <div><dt class="text-sm font-semibold text-muted">Email</dt><dd><a href={`mailto:${settings.email}`} class="font-display text-2xl text-olive break-all">{settings.email}</a></dd></div>}
+          <div><dt class="text-sm font-semibold text-muted">Service area</dt><dd class="text-lg">{settings.serviceAreaLabel}</dd></div>
+          {settings.hours.length > 0 && (
+            <div><dt class="text-sm font-semibold text-muted">Hours</dt>
+              <dd><ul>{settings.hours.map((h) => <li><strong>{h.days}</strong> {h.hours}</li>)}</ul></dd>
+            </div>
+          )}
+          {isSet(settings.responseExpectation) && <div><dt class="text-sm font-semibold text-muted">Response time</dt><dd>{settings.responseExpectation}</dd></div>}
+        </dl>
+      </div>
+
+      <div class="lg:col-span-7">
+        <form
+          name="contact"
+          method="POST"
+          action="/thanks/"
+          data-netlify="true"
+          netlify-honeypot="bot-field"
+          data-astro-reload
+          class="card grid gap-5 p-6 md:p-8"
+          aria-labelledby="contact-form-title"
+          data-contact-form
+          novalidate
+        >
+          <input type="hidden" name="form-name" value="contact" />
+          <p class="hidden"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
+          <h2 id="contact-form-title" class="h-sm">Send a message</h2>
+          <p class="text-sm text-muted">Fields marked with * are required. Please do not include card details.</p>
+
+          <div class="grid gap-5 sm:grid-cols-2">
+            <div>
+              <label for="c-name" class="field-label">Name *</label>
+              <input id="c-name" name="name" required autocomplete="name" class="input" aria-describedby="c-name-err" />
+              <p id="c-name-err" class="field-error" hidden></p>
+            </div>
+            <div>
+              <label for="c-email" class="field-label">Email *</label>
+              <input id="c-email" name="email" type="email" required autocomplete="email" class="input" aria-describedby="c-email-err" />
+              <p id="c-email-err" class="field-error" hidden></p>
+            </div>
+            <div>
+              <label for="c-phone" class="field-label">Phone</label>
+              <input id="c-phone" name="phone" type="tel" autocomplete="tel" class="input" />
+            </div>
+            <div>
+              <label for="c-topic" class="field-label">What is it about? *</label>
+              <select id="c-topic" name="topic" required class="input" data-topic>
+                <option value="general">A general question</option>
+                <option value="event">Event consultation</option>
+                <option value="office">Office or recurring lunches</option>
+                <option value="allergen">Allergen or dietary question</option>
+                <option value="other">Something else</option>
+              </select>
+            </div>
+          </div>
+
+          <fieldset class="grid gap-5 sm:grid-cols-2" data-event-fields>
+            <legend class="sr-only">Event details</legend>
+            <div>
+              <label for="c-date" class="field-label">Event date</label>
+              <input id="c-date" name="event_date" type="date" class="input" />
+            </div>
+            <div>
+              <label for="c-guests" class="field-label">Expected guests</label>
+              <input id="c-guests" name="guests" type="number" min="1" inputmode="numeric" class="input" />
+            </div>
+            <div class="sm:col-span-2">
+              <label for="c-venue" class="field-label">Venue or city</label>
+              <input id="c-venue" name="venue" class="input" />
+            </div>
+          </fieldset>
+
+          <div>
+            <label for="c-message" class="field-label">Message *</label>
+            <textarea id="c-message" name="message" required rows="5" class="input" aria-describedby="c-message-hint c-message-err"></textarea>
+            <p id="c-message-hint" class="field-hint mt-1">For events, mention the occasion and the kind of service you have in mind.</p>
+            <p id="c-message-err" class="field-error" hidden></p>
+          </div>
+
+          <label class="flex items-start gap-3">
+            <input type="checkbox" name="consent" value="yes" required class="mt-1 size-5 shrink-0 accent-[var(--brand-olive)]" aria-describedby="c-consent-err" />
+            <span>I agree to be contacted about this inquiry. See our <a href="/privacy/" class="underline underline-offset-2">privacy policy</a>. *</span>
+          </label>
+          <p id="c-consent-err" class="field-error -mt-3" hidden></p>
+
+          <div class="flex flex-wrap items-center gap-4">
+            <button type="submit" class="btn btn-primary">Send message</button>
+            <p class="text-sm text-muted">Events usually need {rules.leadTimeHours.event / 24}+ days of notice.</p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { track } from '../scripts/analytics';
+  function initContact() {
+    const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
+    if (!form) return;
+    const topic = form.querySelector<HTMLSelectElement>('[data-topic]')!;
+    const eventFields = form.querySelector<HTMLElement>('[data-event-fields]')!;
+    const preset = new URLSearchParams(location.search).get('topic');
+    if (preset && [...topic.options].some((o) => o.value === preset)) topic.value = preset;
+    const sync = () => { eventFields.hidden = topic.value !== 'event'; };
+    topic.addEventListener('change', sync);
+    sync();
+
+    form.addEventListener('submit', (e) => {
+      let firstBad: HTMLElement | null = null;
+      const check = (id: string, ok: boolean, msg: string) => {
+        const el = form.querySelector<HTMLInputElement>(`#${id}`)!;
+        const err = form.querySelector<HTMLElement>(`#${id}-err`)!;
+        el.setAttribute('aria-invalid', String(!ok));
+        err.hidden = ok;
+        err.textContent = ok ? '' : msg;
+        if (!ok && !firstBad) firstBad = el;
+      };
+      const v = (n: string) => (form.elements.namedItem(n) as HTMLInputElement).value.trim();
+      check('c-name', v('name').length > 1, 'Enter your name.');
+      check('c-email', /^\S+@\S+\.\S+$/.test(v('email')), 'Enter a valid email address.');
+      check('c-message', v('message').length > 4, 'Tell us a little about what you need.');
+      const consent = form.querySelector<HTMLInputElement>('input[name=consent]')!;
+      const cErr = form.querySelector<HTMLElement>('#c-consent-err')!;
+      cErr.hidden = consent.checked;
+      cErr.textContent = consent.checked ? '' : 'Please agree so we can reply to you.';
+      if (!consent.checked && !firstBad) firstBad = consent;
+      if (firstBad) { e.preventDefault(); (firstBad as HTMLElement).focus(); return; }
+      track('inquiry_submitted', { path: 'contact_form', service_type: topic.value });
+    });
+  }
+  document.addEventListener('astro:page-load', initContact);
+</script>

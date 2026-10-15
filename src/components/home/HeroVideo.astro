@@ -1,0 +1,102 @@
+---
+import { settings } from '../../lib/site';
+const { hero } = settings;
+const hasVideo = !!(hero.videoMp4 || hero.videoWebm);
+const brandCards = [
+  { href: '/lunchboxes/', title: 'Lunchboxes', text: 'Labeled boxes for one, or family boxes for 3–5' },
+  { href: '/trays/', title: 'Trays', text: 'Half and full trays to share' },
+  { href: '/events/', title: 'Events', text: 'Buffets for 20 guests and up' },
+];
+---
+<section class="hero on-dark relative isolate -mt-[var(--header-h)] flex min-h-[100svh] flex-col overflow-hidden bg-olive-deep text-ivory" aria-labelledby="hero-title">
+  <div class="absolute inset-0 -z-10">
+    <img src={hero.poster} alt="" width="1920" height="1080" fetchpriority="high" decoding="async" class="size-full object-cover" data-hero-poster />
+    {hasVideo && (
+      <video
+        class="absolute inset-0 size-full object-cover opacity-0 transition-opacity duration-700"
+        muted
+        loop
+        playsinline
+        preload="none"
+        poster={hero.poster}
+        aria-hidden="true"
+        data-hero-video
+        data-webm={hero.videoWebm}
+        data-mp4={hero.videoMp4}
+        data-mobile-mp4={hero.videoMobileMp4}
+      ></video>
+    )}
+    <div class="absolute inset-0 bg-[linear-gradient(180deg,rgb(31_39_21/0.55)_0%,rgb(31_39_21/0.25)_35%,rgb(31_39_21/0.7)_75%,rgb(31_39_21/0.92)_100%)]"></div>
+  </div>
+
+  <div class="container-x flex flex-1 flex-col justify-end pt-[calc(var(--header-h)+3rem)] pb-8 md:pb-12">
+    <p class="eyebrow">Tampa Bay catering</p>
+    <h1 id="hero-title" class="h-xl mt-5 max-w-5xl text-ivory [&_em]:text-olive-soft" data-reveal-words>
+      American Mediterranean catering, <em>made easy.</em>
+    </h1>
+    <p class="mt-6 max-w-xl text-lg text-olive-soft md:text-xl" data-reveal>{settings.brandLine} Lunchboxes, trays and buffets, with clear portions, prices and timing.</p>
+    <div class="mt-8 flex flex-wrap gap-3" data-reveal>
+      <a href="/order/" class="btn btn-primary" data-track="builder_cta" data-track-location="hero">Build an Order</a>
+      <a href="/order/?type=event" class="btn btn-ghost" data-track="event_cta" data-track-location="hero">Plan an Event</a>
+    </div>
+
+    <ul class="mt-12 grid gap-3 sm:grid-cols-3 md:mt-16" aria-label="What we cater">
+      {brandCards.map((c) => (
+        <li data-reveal>
+          <a href={c.href} class="group flex min-h-24 items-center justify-between gap-4 rounded-[var(--radius-card)] border border-white/20 bg-white/10 p-5 text-ivory backdrop-blur-md transition-colors hover:bg-white/20">
+            <span>
+              <span class="block font-display text-2xl">{c.title}</span>
+              <span class="block text-sm text-olive-soft">{c.text}</span>
+            </span>
+            <span aria-hidden="true" class="text-xl transition-transform duration-300 group-hover:translate-x-1">→</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  {hasVideo && (
+    <button type="button" class="absolute right-4 top-[calc(var(--header-h)+1rem)] inline-flex min-h-11 items-center gap-2 rounded-full border border-white/30 bg-black/25 px-4 text-sm font-semibold text-ivory backdrop-blur md:right-8" data-hero-toggle hidden aria-pressed="false">
+      <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" data-icon-pause><rect x="2" y="1" width="3.5" height="12" rx="1" fill="currentColor" /><rect x="8.5" y="1" width="3.5" height="12" rx="1" fill="currentColor" /></svg>
+      <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" data-icon-play class="hidden"><path d="M3 1.5v11l9-5.5z" fill="currentColor" /></svg>
+      <span data-label>Pause video</span>
+    </button>
+  )}
+</section>
+
+<script>
+  function initHero() {
+    const video = document.querySelector<HTMLVideoElement>('[data-hero-video]');
+    const toggle = document.querySelector<HTMLButtonElement>('[data-hero-toggle]');
+    if (!video) return;
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
+    if (reduced || saveData) return; // poster only
+
+    const mobile = matchMedia('(max-width: 767px)').matches;
+    const { webm, mp4, mobileMp4 } = video.dataset;
+    const sources: [string | undefined, string][] = mobile && mobileMp4 ? [[mobileMp4, 'video/mp4']] : [[webm, 'video/webm'], [mp4, 'video/mp4']];
+    sources.filter(([src]) => src).forEach(([src, type]) => {
+      const s = document.createElement('source');
+      s.src = src!;
+      s.type = type;
+      video.appendChild(s);
+    });
+    video.load();
+    video.addEventListener('playing', () => { video.style.opacity = '1'; }, { once: true });
+    video.play().catch(() => {});
+
+    if (!toggle) return;
+    toggle.hidden = false;
+    const label = toggle.querySelector('[data-label]')!;
+    toggle.addEventListener('click', () => {
+      const pause = !video.paused;
+      if (pause) video.pause(); else video.play().catch(() => {});
+      toggle.setAttribute('aria-pressed', String(pause));
+      label.textContent = pause ? 'Play video' : 'Pause video';
+      toggle.querySelector('[data-icon-pause]')!.classList.toggle('hidden', pause);
+      toggle.querySelector('[data-icon-play]')!.classList.toggle('hidden', !pause);
+    });
+  }
+  document.addEventListener('astro:page-load', initHero);
+</script>

@@ -1,0 +1,82 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/ui/PageHero.astro';
+import OfferCard from '../components/ui/OfferCard.astro';
+import PricingNotice from '../components/ui/PricingNotice.astro';
+import CtaBand from '../components/ui/CtaBand.astro';
+import { getPackages, rules } from '../lib/site';
+
+const tiers = (await getPackages()).filter((p) => p.data.kind === 'event-tier');
+const fmt = (n: number) => `$${n}`;
+const process = [
+  { title: 'Tell us about the event', text: 'Date, headcount, venue and the kind of service you want. Use the event builder or send a message.' },
+  { title: 'Get an itemized quote', text: 'We confirm the menu, setup, staffing and rentals, with every fee listed. Nothing is booked yet.' },
+  { title: 'Hold your date', text: `A ${rules.eventDeposit.percent}% deposit holds the date, with the balance due ${rules.eventDeposit.balanceDueBusinessDays} business days before (proposed terms, confirmed in your quote).` },
+  { title: 'We cook, deliver and set up', text: 'Food arrives labeled and on time. If you booked setup or staff, we arrange the buffet too.' },
+];
+---
+<Base
+  title="Mediterranean Event Catering in Tampa Bay | Showers, Weddings, Parties"
+  description="Mediterranean event catering for Tampa Bay: drop-off buffets from 20 guests, celebration buffets with chafing setup and signature events. Request an itemized quote."
+>
+  <PageHero
+    eyebrow="Events"
+    title="Bring everyone <em>to the table.</em>"
+    lede="Baby showers, weddings, birthdays and community gatherings. Pick a package as a starting point and we plan the menu and service with you."
+    image="/media/placeholders/event.svg"
+    primary={{ href: '/order/?type=event', label: 'Plan your event' }}
+    secondary={{ href: '/contact/?topic=event', label: 'Request a consultation' }}
+  />
+
+  <section class="container-x pb-20" aria-labelledby="tiers-title">
+    <div class="flex flex-wrap items-end justify-between gap-4 border-t border-sand pt-12">
+      <div>
+        <p class="eyebrow">Event packages</p>
+        <h2 id="tiers-title" class="h-md mt-3">Three ways <em>to host.</em></h2>
+      </div>
+      <PricingNotice />
+    </div>
+    <div class="mt-10 grid gap-5 md:grid-cols-3">
+      {tiers.map((p) => <OfferCard id={p.id} pkg={p.data} href={`/order/?type=event&package=${p.id}`} cta="Plan with this package" />)}
+    </div>
+    <p class="mt-6 max-w-3xl text-sm text-muted">Per-guest prices cover food. Delivery, setup, staff, rentals, gratuity and tax are listed separately in your quote. No package is all-inclusive unless your quote says exactly what is included.</p>
+  </section>
+
+  <section class="bg-paper" aria-labelledby="addons-title">
+    <div class="section container-x grid gap-10 lg:grid-cols-12">
+      <div class="lg:col-span-4">
+        <p class="eyebrow">Add-ons</p>
+        <h2 id="addons-title" class="h-md mt-3">Service, <em>as much as you need.</em></h2>
+      </div>
+      <ul class="grid gap-x-8 sm:grid-cols-2 lg:col-span-8">
+        <li class="border-b border-sand py-4">
+          <p class="font-bold">Buffet setup</p>
+          <p class="text-muted">Usually {fmt(rules.setupFee.min)}–{fmt(rules.setupFee.max)}+, depending on buffet size.</p>
+        </li>
+        {rules.eventAddOns.filter((a) => a.key !== 'setup').map((a) => (
+          <li class="border-b border-sand py-4">
+            <p class="font-bold">{a.label}</p>
+            <p class="text-muted">{a.note}.</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section container-x" aria-labelledby="process-title">
+    <p class="eyebrow">From inquiry to buffet</p>
+    <h2 id="process-title" class="h-md mt-3 max-w-2xl">How event booking <em>works.</em></h2>
+    <ol class="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+      {process.map((s, i) => (
+        <li class="card p-6" data-reveal>
+          <span class="font-display text-4xl italic text-terracotta" aria-hidden="true">0{i + 1}</span>
+          <h3 class="mt-4 font-sans text-lg font-bold text-ink">{s.title}</h3>
+          <p class="mt-2 text-muted">{s.text}</p>
+        </li>
+      ))}
+    </ol>
+    <p class="mt-8 max-w-2xl text-muted">Events usually need 7–14 days of notice, and more for peak dates. Tastings are available and paid; ask about them in your inquiry.</p>
+  </section>
+
+  <CtaBand title="Got a date? <em>Let’s plan the menu.</em>" text="Tell us the date, headcount and venue. We reply with an itemized quote, and nothing is booked until you approve it." />
+</Base>

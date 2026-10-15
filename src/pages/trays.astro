@@ -1,0 +1,94 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/ui/PageHero.astro';
+import OfferCard from '../components/ui/OfferCard.astro';
+import PricingNotice from '../components/ui/PricingNotice.astro';
+import MenuTable from '../components/ui/MenuTable.astro';
+import CtaBand from '../components/ui/CtaBand.astro';
+import { getMenu, getPackages, rules } from '../lib/site';
+import { leadTimeText } from '../lib/order';
+
+const [packages, menu] = await Promise.all([getPackages(), getMenu()]);
+const trayPackages = packages.filter((p) => p.data.kind === 'tray-package');
+const groups = [
+  { title: 'Mains', cats: ['mains'] },
+  { title: 'Salads', cats: ['salads'] },
+  { title: 'Dips and sauces', cats: ['dips'] },
+  { title: 'Mezze and appetizers', cats: ['mezze'] },
+  { title: 'Carbs and sides', cats: ['carbs', 'sides'] },
+].map((g) => ({ ...g, items: menu.filter((m) => g.cats.includes(m.data.category)) }));
+---
+<Base
+  title="Mediterranean Catering Trays in Tampa Bay | Half & Full Trays"
+  description="Half and full Mediterranean catering trays for Tampa Bay: chicken shawarma, gyro, salads, hummus and sides. Serving estimates and starting prices for every tray."
+>
+  <PageHero
+    eyebrow="Trays & meal catering"
+    title="Trays that <em>feed the room.</em>"
+    lede="Half trays serve about 5–6 people and full trays about 10–12. Start with a tray package, or build your own from every category and we confirm the price."
+    image="/media/placeholders/tray-package.svg"
+    primary={{ href: '/order/?type=trays', label: 'Build a tray order' }}
+    secondary={{ href: '#tray-menu', label: 'See tray prices' }}
+  />
+
+  <section class="container-x pb-20" aria-labelledby="packages-title">
+    <div class="flex flex-wrap items-end justify-between gap-4 border-t border-sand pt-12">
+      <div>
+        <p class="eyebrow">Tray packages</p>
+        <h2 id="packages-title" class="h-md mt-3">A full spread, <em>chosen for you.</em></h2>
+      </div>
+      <PricingNotice />
+    </div>
+    <div class="mt-10 grid gap-5 md:grid-cols-3">
+      {trayPackages.map((p) => <OfferCard id={p.id} pkg={p.data} href={`/order/?type=trays&package=${p.id}`} cta={p.data.custom ? 'Build your own' : 'Build this package'} />)}
+    </div>
+  </section>
+
+  <section class="bg-paper" aria-labelledby="estimator-title">
+    <div class="section container-x grid gap-10 lg:grid-cols-12 lg:items-center">
+      <div class="lg:col-span-5">
+        <p class="eyebrow">How much to order</p>
+        <h2 id="estimator-title" class="h-md mt-3">How many trays <em>do you need?</em></h2>
+        <p class="mt-4 text-muted">A rough guide: one main tray per 5–6 guests in half trays, plus a salad, dip and side for every two mains. Real numbers depend on the menu mix and appetite, so we check your order before we confirm it.</p>
+      </div>
+      <div class="card p-6 lg:col-span-6 lg:col-start-7" data-estimator>
+        <label for="guests" class="field-label">Number of guests</label>
+        <input id="guests" type="number" inputmode="numeric" min="1" max="500" value="20" class="input max-w-40" />
+        <output for="guests" class="mt-6 block" aria-live="polite" data-estimate></output>
+      </div>
+    </div>
+  </section>
+
+  <section id="tray-menu" class="section container-x" aria-labelledby="menu-title">
+    <p class="eyebrow">Tray menu</p>
+    <h2 id="menu-title" class="h-md mt-3">Every tray, <em>half or full.</em></h2>
+    <p class="mt-4 max-w-2xl text-muted">Choose a dish to start a tray order with it. Delivery, setup, staffing, rentals and tax are shown or quoted before you pay. Trays need {leadTimeText(rules.leadTimeHours.trays)} notice.</p>
+    <PricingNotice class="mt-4" />
+    <div class="mt-10 grid gap-6 lg:grid-cols-2">
+      {groups.map((g) => <MenuTable title={g.title} items={g.items} />)}
+    </div>
+  </section>
+
+  <CtaBand title="Feeding a crowd? <em>Build a tray order.</em>" />
+</Base>
+
+<script>
+  function initEstimator() {
+    const root = document.querySelector<HTMLElement>('[data-estimator]');
+    if (!root) return;
+    const input = root.querySelector<HTMLInputElement>('input')!;
+    const out = root.querySelector<HTMLElement>('[data-estimate]')!;
+    const render = () => {
+      const g = Math.max(1, Math.min(500, Number(input.value) || 0));
+      const mainsHalf = Math.ceil(g / 5.5);
+      const full = Math.floor(mainsHalf / 2);
+      const half = mainsHalf % 2;
+      const sides = Math.max(1, Math.ceil(mainsHalf / 2));
+      const mainText = [full && `${full} full`, half && `${half} half`].filter(Boolean).join(' + ');
+      out.innerHTML = `<span class="font-display text-3xl text-olive">${mainText} main ${mainsHalf > 1 ? 'trays' : 'tray'}</span><span class="mt-2 block text-muted">plus about ${sides} half ${sides > 1 ? 'trays' : 'tray'} each of salad, dip and a side, for ${g} guests.</span>`;
+    };
+    input.addEventListener('input', render);
+    render();
+  }
+  document.addEventListener('astro:page-load', initEstimator);
+</script>

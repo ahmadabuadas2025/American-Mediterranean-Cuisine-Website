@@ -1,0 +1,19 @@
+---
+interface Props { title?: string; text?: string }
+const {
+  title = 'Hungry? <em>Let’s feed your table.</em>',
+  text = 'Build a box, a tray order or an event menu in three steps. You see what is included and what it costs before you send anything.',
+} = Astro.props;
+---
+<section class="on-dark relative overflow-hidden bg-terracotta-deep text-ivory" aria-labelledby="cta-band-title">
+  <div class="container-x section relative grid gap-8 md:grid-cols-12 md:items-end">
+    <h2 id="cta-band-title" class="display h-xl text-ivory md:col-span-8 [&_em]:text-terracotta-soft" data-reveal-words set:html={title} />
+    <div class="md:col-span-4" data-reveal>
+      <p class="text-lg text-terracotta-soft">{text}</p>
+      <div class="mt-6 flex flex-wrap gap-3">
+        <a href="/order/" class="btn bg-ivory text-terracotta-deep hover:bg-white" data-track="builder_cta" data-track-location="cta_band">Build an Order</a>
+        <a href="/order/?type=event" class="btn btn-ghost">Plan an Event</a>
+      </div>
+    </div>
+  </div>
+</section>

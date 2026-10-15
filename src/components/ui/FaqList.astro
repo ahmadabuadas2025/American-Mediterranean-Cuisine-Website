@@ -1,0 +1,16 @@
+---
+import { fillRules } from '../../lib/site';
+interface Props { items: { id: string; data: { question: string; answer: string } }[] }
+const { items } = Astro.props;
+---
+<div class="faq-list divide-y divide-sand border-y border-sand">
+  {items.map((f) => (
+    <details class="group" data-faq={f.id}>
+      <summary class="flex min-h-16 cursor-pointer list-none items-center justify-between gap-6 py-4 text-lg font-semibold text-ink [&::-webkit-details-marker]:hidden">
+        <span>{f.data.question}</span>
+        <span aria-hidden="true" class="grid size-9 shrink-0 place-items-center rounded-full border border-olive-mid text-olive transition-transform duration-300 group-open:rotate-45">+</span>
+      </summary>
+      <p class="max-w-3xl pb-6 text-muted">{fillRules(f.data.answer)}</p>
+    </details>
+  ))}
+</div>

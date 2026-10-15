@@ -1,0 +1,47 @@
+---
+import Base from '../layouts/Base.astro';
+import MenuBrowser from '../components/MenuBrowser';
+import PricingNotice from '../components/ui/PricingNotice.astro';
+import CtaBand from '../components/ui/CtaBand.astro';
+import { getCatalog, getPackages, settings } from '../lib/site';
+import { priceText } from '../lib/site';
+
+const catalog = await getCatalog();
+const packages = await getPackages();
+const boxes = packages.filter((p) => ['box', 'family'].includes(p.data.kind));
+---
+<Base
+  title="Mediterranean Catering Menu & Prices | Tampa Bay"
+  description="Full Mediterranean catering menu with half and full tray prices: shawarma, gyro, mixed grill, salads, hummus, baba ghanoush, falafel and sides. Dietary markers included."
+>
+  <section class="container-x pt-10 pb-10 md:pt-16">
+    <p class="eyebrow">Menu</p>
+    <h1 class="h-xl mt-5" data-reveal-words>The whole menu, <em>with prices.</em></h1>
+    <p class="lede mt-6">Every dish comes in half trays (about 5–6 people) or full trays (about 10–12). Many also go into our lunchboxes and family boxes.</p>
+    <PricingNotice class="mt-5" />
+  </section>
+
+  <section class="container-x pb-20" aria-label="Menu dishes">
+    <MenuBrowser client:visible items={catalog.menu} dietaryProposed={settings.dietaryMarkersStatus !== 'approved'} />
+    <p class="mt-8 max-w-3xl text-sm text-muted">{settings.dietaryDisclaimer} <a href="/contact/?topic=allergen" class="underline underline-offset-2">Ask an allergen question</a>.</p>
+  </section>
+
+  <section class="bg-paper" aria-labelledby="boxes-menu-title">
+    <div class="section container-x">
+      <h2 id="boxes-menu-title" class="h-md">Lunchboxes and <em>family boxes.</em></h2>
+      <ul class="mt-8 grid gap-x-10 md:grid-cols-2">
+        {boxes.map((p) => (
+          <li class="flex items-baseline justify-between gap-6 border-b border-sand py-4">
+            <div>
+              <a href={`/order/?package=${p.id}`} class="font-semibold text-ink underline-offset-4 hover:underline">{p.data.name}</a>
+              <p class="text-sm text-muted">{p.data.summary}</p>
+            </div>
+            <p class="shrink-0 font-display text-xl text-olive">{priceText(p.data.price, p.data.priceUnit)}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand />
+</Base>

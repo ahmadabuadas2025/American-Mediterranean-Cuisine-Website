@@ -1,0 +1,64 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/ui/PageHero.astro';
+import OfferCard from '../components/ui/OfferCard.astro';
+import PricingNotice from '../components/ui/PricingNotice.astro';
+import CtaBand from '../components/ui/CtaBand.astro';
+import { getPackages, rules } from '../lib/site';
+import { leadTimeText } from '../lib/order';
+
+const packages = await getPackages();
+const boxes = packages.filter((p) => p.data.kind === 'box');
+const family = packages.filter((p) => p.data.kind === 'family');
+---
+<Base
+  title="Mediterranean Lunchboxes & Family Boxes in Tampa Bay"
+  description="Individually labeled Mediterranean lunchboxes for offices and meetings, plus family boxes for 3–5 people. Classic, deluxe and vegetarian options with clear pricing."
+>
+  <PageHero
+    eyebrow="Lunchboxes & family boxes"
+    title="A good lunch, <em>labeled and ready.</em>"
+    lede="Individual boxes for one person or a whole office, and family boxes sized for 3–5. Pick the main for each box, add a salad, dip and side, and we label everything."
+    image="/media/placeholders/box.svg"
+    primary={{ href: '/order/?type=individual', label: 'Build a box' }}
+    secondary={{ href: '/order/?type=office', label: 'Order for an office' }}
+  />
+
+  <section class="container-x pb-20" aria-labelledby="boxes-title">
+    <div class="flex flex-wrap items-end justify-between gap-4 border-t border-sand pt-12">
+      <div>
+        <p class="eyebrow">Individual boxes</p>
+        <h2 id="boxes-title" class="h-md mt-3">One person, <em>one box.</em></h2>
+      </div>
+      <PricingNotice />
+    </div>
+    <div class="mt-10 grid gap-5 md:grid-cols-3">
+      {boxes.map((p) => <OfferCard id={p.id} pkg={p.data} href={`/order/?type=individual&package=${p.id}`} cta="Build a box" />)}
+    </div>
+  </section>
+
+  <section class="container-x pb-20" aria-labelledby="family-title">
+    <div class="border-t border-sand pt-12">
+      <p class="eyebrow">Family boxes</p>
+      <h2 id="family-title" class="h-md mt-3">Dinner for 3–5, <em>sorted.</em></h2>
+      <p class="lede mt-4">Shared containers of mains, mezze, salads and dips. Choose protein or vegetarian options.</p>
+    </div>
+    <div class="mt-10 grid gap-5 md:grid-cols-3">
+      {family.map((p) => <OfferCard id={p.id} pkg={p.data} href={`/order/?type=family&package=${p.id}`} cta="Build a family box" />)}
+    </div>
+  </section>
+
+  <section class="bg-paper" aria-labelledby="good-to-know">
+    <div class="section container-x grid gap-10 lg:grid-cols-12">
+      <h2 id="good-to-know" class="h-md lg:col-span-4">Good to <em>know.</em></h2>
+      <dl class="grid gap-8 sm:grid-cols-2 lg:col-span-8">
+        <div><dt class="font-bold">Notice</dt><dd class="mt-1 text-muted">Order at least {leadTimeText(rules.leadTimeHours.individual)} ahead. Shorter notice may be possible as a rush request.</dd></div>
+        <div><dt class="font-bold">Office minimum</dt><dd class="mt-1 text-muted">Office delivery starts at {rules.minimums.officeMeals} meals or ${rules.minimums.officeSubtotal} in food.</dd></div>
+        <div><dt class="font-bold">Labels</dt><dd class="mt-1 text-muted">Each box is labeled with its contents so your group can find the right one quickly.</dd></div>
+        <div><dt class="font-bold">Allergies</dt><dd class="mt-1 text-muted">Tell us in the order builder. We reply before preparing your order if anything needs a conversation. <a href="/faq/" class="underline underline-offset-2">Dietary FAQ</a></dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <CtaBand title="Lunch for the team? <em>Start with a box.</em>" />
+</Base>
