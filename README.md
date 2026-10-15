@@ -2,7 +2,7 @@
 
 Production website for **American Mediterranean Cuisine**, a catering business serving Tampa Bay, Florida. It helps individuals, offices, families and event hosts understand the offer, build an order in three steps, and either send a quote request or (once approved) pay for a standard order online.
 
-The developer brief in [`docs/brief.pdf`](docs/brief.pdf) is the source of truth.
+The developer brief is the source of truth. It is kept out of this public repository: place your copy at `docs/brief.pdf` (git-ignored).
 
 - **Owners and editors:** read [`docs/OWNER-GUIDE.md`](docs/OWNER-GUIDE.md).
 - **Before going live:** work through [`docs/LAUNCH-CHECKLIST.md`](docs/LAUNCH-CHECKLIST.md).

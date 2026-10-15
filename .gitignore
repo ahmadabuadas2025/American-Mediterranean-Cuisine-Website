@@ -12,3 +12,6 @@ src/generated/
 .DS_Store
 .playwright-mcp/
 media-src/
+
+# Client brief stays local (not published)
+docs/brief.pdf
