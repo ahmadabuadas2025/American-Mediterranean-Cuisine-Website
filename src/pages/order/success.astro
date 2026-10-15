@@ -1,0 +1,43 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+<Base title="Payment received" description="Your payment status." noindex>
+  <section class="container-x section max-w-3xl" data-success>
+    <p class="eyebrow" data-eyebrow>Checking payment</p>
+    <h1 class="h-lg mt-4" data-title>One moment while we <em>confirm your payment.</em></h1>
+    <div class="market-label mt-8" data-id-wrap hidden><span class="unit">Order number</span><span class="price" data-id></span></div>
+    <p class="lede mt-6" data-message aria-live="polite">We are waiting for confirmation from our payment provider. This usually takes a few seconds.</p>
+    <div class="mt-10 flex flex-wrap gap-3">
+      <a href="/" class="btn btn-primary">Back to home</a>
+      <a href="/contact/" class="btn btn-ghost">Contact us</a>
+    </div>
+  </section>
+</Base>
+
+<script>
+  async function initSuccess() {
+    const root = document.querySelector<HTMLElement>('[data-success]');
+    if (!root) return;
+    const params = new URLSearchParams(location.search);
+    const id = params.get('id') ?? '';
+    const session = params.get('session_id') ?? '';
+    const $ = (s: string) => root.querySelector<HTMLElement>(s)!;
+    if (id) { $('[data-id]').textContent = id; $('[data-id-wrap]').hidden = false; }
+    for (let i = 0; i < 10; i++) {
+      const res = await fetch(`/api/order-status?id=${encodeURIComponent(id)}&session_id=${encodeURIComponent(session)}`).catch(() => null);
+      const data = res?.ok ? await res.json() : null;
+      if (data?.paymentStatus === 'paid') {
+        $('[data-eyebrow]').textContent = 'Order confirmed';
+        $('[data-title]').innerHTML = 'Your order is <em>confirmed.</em>';
+        $('[data-message]').textContent = 'Payment received. A confirmation with your items, time and address is on its way to your inbox.';
+        window.amcTrack?.('checkout_completed', {});
+        return;
+      }
+      await new Promise((r) => setTimeout(r, 2000));
+    }
+    $('[data-eyebrow]').textContent = 'Payment processing';
+    $('[data-title]').innerHTML = 'Payment received, <em>confirmation pending.</em>';
+    $('[data-message]').textContent = 'We have not received final confirmation yet. Your order is confirmed only when you get our confirmation email. If it does not arrive within an hour, contact us with your order number.';
+  }
+  document.addEventListener('astro:page-load', initSuccess);
+</script>

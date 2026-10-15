@@ -1,0 +1,14 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+<Base title="Payment not completed" description="Your payment was not completed." noindex>
+  <section class="container-x section max-w-3xl">
+    <p class="eyebrow">Payment not completed</p>
+    <h1 class="h-lg mt-4">Nothing was charged. <em>Your order is not confirmed.</em></h1>
+    <p class="lede mt-6">We kept your request on file. You can try payment again, or contact us and we will send you a payment link.</p>
+    <div class="mt-10 flex flex-wrap gap-3">
+      <a href="/order/" class="btn btn-primary">Back to the order builder</a>
+      <a href="/contact/" class="btn btn-ghost">Contact us</a>
+    </div>
+  </section>
+</Base>
