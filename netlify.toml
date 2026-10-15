@@ -5,8 +5,8 @@
 
 [build.environment]
   NODE_VERSION = "22"
-  # Online checkout stays off until the owner approves prices, zones and a Stripe account.
-  PAYMENTS_ENABLED = "false"
+  # Online checkout is off unless PAYMENTS_ENABLED=true is set in the Netlify UI
+  # (after the owner approves prices, zones and a Stripe account).
 
 [functions]
   node_bundler = "esbuild"
