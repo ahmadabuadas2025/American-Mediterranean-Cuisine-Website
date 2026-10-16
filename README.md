@@ -8,6 +8,7 @@ The developer brief is the source of truth. It is kept out of this public reposi
 - **Before going live:** work through [`docs/LAUNCH-CHECKLIST.md`](docs/LAUNCH-CHECKLIST.md).
 - **Test results:** [`docs/TEST-REPORT.md`](docs/TEST-REPORT.md).
 - **Photo and video prompts:** [`docs/media-prompts.md`](docs/media-prompts.md).
+- **GoHighLevel CRM setup:** [`docs/GOHIGHLEVEL.md`](docs/GOHIGHLEVEL.md).
 
 ## Stack
 
@@ -88,7 +89,7 @@ npm run media                 # re-encode media-src/ into public/media (set FFMP
 
 The customer always sees **"Request received"** for quotes and conflicts. **"Order confirmed"** appears only after the Stripe webhook verifies a payment that matches the stored total.
 
-Each submission gets an ID like `AMC-2026-000123`, is stored in Netlify Blobs, emailed to the business (`BUSINESS_EMAIL`) and acknowledged to the customer. Owners manage orders at `/admin/orders/` (password: `ADMIN_PASSWORD`) with CSV export.
+Each submission gets an ID like `AMC-2026-000123`, is stored in Netlify Blobs, emailed to the business (`BUSINESS_EMAIL`) and acknowledged to the customer. If `GHL_WEBHOOK_URL` is set, it is also sent to GoHighLevel (new orders, payments and status changes), which can take over customer emails, the pipeline and invoicing. Owners manage orders at `/admin/orders/` (password: `ADMIN_PASSWORD`) with CSV export.
 
 ## Deploying to Netlify
 

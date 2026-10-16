@@ -8,7 +8,8 @@ Run on 14 October 2026 against the production build (`npx netlify serve --offlin
 |---|---|
 | Type check (`astro check`) | 0 errors, 0 warnings |
 | Content validation (`scripts/build-catalog.ts`) | 23 dishes, 12 packages, all valid |
-| Unit tests (Vitest, `tests/order.test.ts`) | **18 / 18 passed** |
+| Unit tests (Vitest, `tests/order.test.ts`, `tests/ghl.test.ts`) | **21 / 21 passed** |
+| GoHighLevel webhook (mock GHL receiver) | New order, status change and resend delivered; with GHL down the order still saves and the failure is logged ✔ |
 | End-to-end tests (Playwright, `tests/e2e/`) | **43 / 43 passed** |
 | Accessibility (axe-core, WCAG 2.1 A/AA, 13 pages) | **0 violations** |
 | Lighthouse mobile Accessibility / Best Practices / SEO | **100 / 100 / 100** on all 12 pages measured |

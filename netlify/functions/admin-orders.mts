@@ -8,6 +8,7 @@
 import type { Config } from '@netlify/functions';
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { z } from 'zod';
+import { sendToGhl } from '../lib/ghl';
 import { getOrder, json, listOrders, saveOrder, STATUSES, toCsv } from '../lib/orders';
 
 const digest = (s: string) => createHash('sha256').update(s).digest();
@@ -26,6 +27,8 @@ const patchSchema = z.object({
   nextFollowUp: z.string().trim().max(40).optional(),
   internalNotes: z.string().trim().max(4000).optional(),
   by: z.string().trim().max(80).optional(),
+  /** re-send this order to GoHighLevel */
+  resendGhl: z.boolean().optional(),
 });
 
 export default async (req: Request) => {
@@ -52,7 +55,7 @@ export default async (req: Request) => {
   if (req.method === 'PATCH') {
     const parsed = patchSchema.safeParse(await req.json().catch(() => null));
     if (!parsed.success) return json({ message: 'Invalid update' }, 400);
-    const { id, by = 'admin', ...changes } = parsed.data;
+    const { id, by = 'admin', resendGhl, ...changes } = parsed.data;
     const record = await getOrder(id);
     if (!record) return json({ message: 'Not found' }, 404);
     // Only the payment webhook may mark an online order as paid.
@@ -65,6 +68,12 @@ export default async (req: Request) => {
       .map(([k, v]) => `${k}: ${String(record[k as keyof typeof record] ?? '') || '—'} → ${v || '—'}`);
     Object.assign(record, Object.fromEntries(Object.entries(changes).filter(([, v]) => v !== undefined)));
     if (described.length) record.history.push({ at: now, by, change: described.join('; ') });
+    // Keep the GHL pipeline in step: send on manual resend or any status change.
+    if (process.env.GHL_WEBHOOK_URL && (resendGhl || described.some((d) => d.startsWith('status:')))) {
+      const ok = await sendToGhl(record, 'order.updated');
+      record.history.push({ at: now, by, change: ok ? 'Sent to GoHighLevel' : 'GoHighLevel webhook failed' });
+      if (resendGhl && !ok) { await saveOrder(record); return json({ message: 'GoHighLevel did not accept the order. Check GHL_WEBHOOK_URL.', order: record }, 502); }
+    }
     await saveOrder(record);
     return json({ order: record });
   }

@@ -7,6 +7,7 @@ import type { Config } from '@netlify/functions';
 import { sendBusinessNotice, sendCustomerConfirmed } from '../lib/email';
 import { getOrder, json, saveOrder } from '../lib/orders';
 import { verifyStripeSignature } from '../lib/stripe';
+import { ghlHandlesCustomerEmail, sendToGhl } from '../lib/ghl';
 
 interface SessionEvent {
   type: string;
@@ -44,7 +45,11 @@ export default async (req: Request) => {
   record.amountPaid = session.amount_total;
   record.history.push({ at: now, by: 'stripe', change: `Paid ${session.amount_total / 100} USD; order confirmed` });
   await saveOrder(record);
-  await Promise.allSettled([sendCustomerConfirmed(record), sendBusinessNotice(record, 'Order paid and confirmed')]);
+  await Promise.allSettled([
+    ghlHandlesCustomerEmail() ? Promise.resolve(false) : sendCustomerConfirmed(record),
+    sendBusinessNotice(record, 'Order paid and confirmed'),
+    sendToGhl(record, 'order.paid'),
+  ]);
   return json({ received: true });
 };
 

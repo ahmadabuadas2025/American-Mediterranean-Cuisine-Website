@@ -86,7 +86,7 @@ import '../../styles/global.css';
           </div>
           <div><label class="field-label" for="d-notes">Internal notes</label><textarea class="input" id="d-notes" name="internalNotes" rows="3"></textarea></div>
           <p class="field-error" data-detail-error role="alert" hidden></p>
-          <div class="flex gap-2"><button type="button" class="btn btn-primary" data-save>Save</button><button value="cancel" class="btn btn-ghost">Close</button></div>
+          <div class="flex flex-wrap gap-2"><button type="button" class="btn btn-primary" data-save>Save</button><button type="button" class="btn btn-ghost" data-ghl>Send to GoHighLevel</button><button value="cancel" class="btn btn-ghost">Close</button></div>
           <details><summary class="cursor-pointer font-semibold">Change history</summary><ul class="mt-2 space-y-1 text-sm text-muted" data-history></ul></details>
         </form>
       </dialog>
@@ -159,6 +159,16 @@ import '../../styles/global.css';
         $<HTMLDialogElement>('[data-detail]').showModal();
       }
 
+      async function resendGhl() {
+        if (!current) return;
+        const res = await api({ method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id: current.id, resendGhl: true }) });
+        const body = await res.json().catch(() => ({}));
+        const e = $('[data-detail-error]');
+        e.textContent = res.ok ? 'Sent to GoHighLevel.' : (body.message ?? 'Could not send');
+        e.hidden = false;
+        if (body.order) { orders = orders.map((o) => (o.id === body.order.id ? body.order : o)); current = body.order; }
+      }
+
       async function save() {
         if (!current) return;
         const f = $<HTMLFormElement>('[data-detail-form]');
@@ -188,6 +198,7 @@ import '../../styles/global.css';
       $('[data-filter-q]').addEventListener('input', render);
       $('[data-rows]').addEventListener('click', (e) => { const b = (e.target as HTMLElement).closest<HTMLElement>('[data-open]'); if (b) open(b.dataset.open!); });
       $('[data-save]').addEventListener('click', save);
+      $('[data-ghl]').addEventListener('click', resendGhl);
       if (pw()) load();
     </script>
   </body>
