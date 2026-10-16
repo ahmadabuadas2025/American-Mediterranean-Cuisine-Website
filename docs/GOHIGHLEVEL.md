@@ -61,7 +61,7 @@ Also sent, if you want them: `payment_status`, `amount_paid`, `delivery_fee`, `t
 
 1. **Automation → Workflows → Create Workflow → Start from scratch**, named **Website catering orders**.
 2. **Add New Trigger → Inbound Webhook.** GHL shows a webhook URL. **Copy it.**
-3. Leave this tab open and do Step 4, so the website sends a sample order. Then come back, click **Fetch sample requests** and pick the sample so GHL learns the fields.
+3. Send a sample so GHL learns the fields: run `npx tsx scripts/ghl-sample.ts <webhook-url>` (sends one order marked TEST), or do Step 4 and place a test order. Then click **Fetch sample requests** and pick the sample.
 4. Add actions:
    1. **Create/Update Contact.** Map first name, last name, email, phone, company, address, city, state and postal code from the webhook fields, plus the custom fields from Step 2.
    2. **Add Tag.** Use `website-order` (the payload's `tags` field also has `service-office`, `path-quote` and so on).
