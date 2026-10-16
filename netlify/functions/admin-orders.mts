@@ -13,10 +13,16 @@ import { getOrder, json, listOrders, saveOrder, STATUSES, toCsv } from '../lib/o
 
 const digest = (s: string) => createHash('sha256').update(s).digest();
 
-function authorized(req: Request) {
-  const password = process.env.ADMIN_PASSWORD;
-  if (!password || password.length < 12) return false;
-  const given = (req.headers.get('authorization') ?? '').replace(/^Bearer\s+/i, '');
+declare const Netlify: { env: { get(name: string): string | undefined } } | undefined;
+
+/** Reads the password from Netlify's runtime env first, then process.env; trims stray spaces. */
+function adminPassword() {
+  const fromNetlify = typeof Netlify !== 'undefined' ? Netlify.env.get('ADMIN_PASSWORD') : undefined;
+  return (fromNetlify ?? process.env.ADMIN_PASSWORD ?? '').trim();
+}
+
+function authorized(req: Request, password: string) {
+  const given = (req.headers.get('authorization') ?? '').replace(/^Bearer\s+/i, '').trim();
   return timingSafeEqual(digest(given), digest(password));
 }
 
@@ -32,8 +38,14 @@ const patchSchema = z.object({
 });
 
 export default async (req: Request) => {
-  if (!process.env.ADMIN_PASSWORD) return json({ message: 'ADMIN_PASSWORD is not configured on this site.' }, 503);
-  if (!authorized(req)) {
+  const password = adminPassword();
+  if (!password) {
+    return json({ message: 'ADMIN_PASSWORD is not set for this deploy. In Netlify, set it with the Functions scope and the Production context, then trigger a new deploy.' }, 503);
+  }
+  if (password.length < 12) {
+    return json({ message: `ADMIN_PASSWORD is set but only ${password.length} characters long. Use 12 or more characters, then trigger a new deploy.` }, 503);
+  }
+  if (!authorized(req, password)) {
     await new Promise((r) => setTimeout(r, 600)); // slow down guessing
     return json({ message: 'Wrong password' }, 401);
   }

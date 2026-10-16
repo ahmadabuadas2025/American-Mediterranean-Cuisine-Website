@@ -104,7 +104,8 @@ import '../../styles/global.css';
       const api = (init: RequestInit = {}, q = '') => fetch(`/api/admin/orders${q}`, { ...init, headers: { ...(init.headers ?? {}), authorization: `Bearer ${pw()}` } });
 
       async function load() {
-        const res = await api();
+        const res = await api().catch(() => null);
+        if (!res) { const err = $('[data-login-error]'); err.textContent = 'Could not reach the server. Check your connection and try again.'; err.hidden = false; return; }
         if (res.status === 401 || res.status === 503) {
           sessionStorage.removeItem(KEY);
           const msg = (await res.json().catch(() => ({}))).message ?? 'Sign-in failed';
