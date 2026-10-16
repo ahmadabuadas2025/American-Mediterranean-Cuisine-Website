@@ -5,7 +5,7 @@
  * here first, so a GHL outage never loses an order.
  */
 import { formatDate, money, SERVICE_LABELS } from '../../src/lib/order';
-import { siteUrl, type OrderRecord } from './orders';
+import { env, siteUrl, type OrderRecord } from './orders';
 
 export type GhlEvent = 'order.created' | 'order.paid' | 'order.updated';
 
@@ -75,9 +75,13 @@ export function buildGhlPayload(r: OrderRecord, event: GhlEvent) {
   };
 }
 
+let lastError = '';
+/** Short description of the most recent webhook failure (for the dashboard). */
+export const lastGhlError = () => lastError;
+
 /** Returns true when GHL accepted the payload; never throws. */
 export async function sendToGhl(r: OrderRecord, event: GhlEvent): Promise<boolean> {
-  const url = process.env.GHL_WEBHOOK_URL;
+  const url = env('GHL_WEBHOOK_URL');
   if (!url) return false;
   try {
     const res = await fetch(url, {
@@ -86,13 +90,17 @@ export async function sendToGhl(r: OrderRecord, event: GhlEvent): Promise<boolea
       body: JSON.stringify(buildGhlPayload(r, event)),
       signal: AbortSignal.timeout(8000),
     });
-    if (!res.ok) console.error(`[ghl] webhook returned ${res.status}: ${(await res.text()).slice(0, 300)}`);
+    if (!res.ok) {
+      lastError = `HTTP ${res.status}: ${(await res.text()).slice(0, 160)}`;
+      console.error(`[ghl] webhook returned ${lastError}`);
+    }
     return res.ok;
   } catch (err) {
+    lastError = err instanceof Error ? err.message : String(err);
     console.error('[ghl] webhook failed', err);
     return false;
   }
 }
 
 /** When GHL sends the customer emails, skip the website's own customer email to avoid duplicates. */
-export const ghlHandlesCustomerEmail = () => !!process.env.GHL_WEBHOOK_URL && process.env.GHL_HANDLES_CUSTOMER_EMAIL === 'true';
+export const ghlHandlesCustomerEmail = () => !!env('GHL_WEBHOOK_URL') && env('GHL_HANDLES_CUSTOMER_EMAIL') === 'true';

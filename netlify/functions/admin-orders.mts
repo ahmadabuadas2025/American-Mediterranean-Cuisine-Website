@@ -8,17 +8,22 @@
 import type { Config } from '@netlify/functions';
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { z } from 'zod';
-import { sendToGhl } from '../lib/ghl';
-import { getOrder, json, listOrders, saveOrder, STATUSES, toCsv } from '../lib/orders';
+import { lastGhlError, sendToGhl } from '../lib/ghl';
+import { env, getOrder, json, listOrders, paymentsEnabled, saveOrder, STATUSES, toCsv } from '../lib/orders';
 
 const digest = (s: string) => createHash('sha256').update(s).digest();
 
-declare const Netlify: { env: { get(name: string): string | undefined } } | undefined;
+const adminPassword = () => env('ADMIN_PASSWORD');
 
-/** Reads the password from Netlify's runtime env first, then process.env; trims stray spaces. */
-function adminPassword() {
-  const fromNetlify = typeof Netlify !== 'undefined' ? Netlify.env.get('ADMIN_PASSWORD') : undefined;
-  return (fromNetlify ?? process.env.ADMIN_PASSWORD ?? '').trim();
+/** What is connected on this deploy (no secret values, only yes/no). */
+function integrations() {
+  const ghlUrl = env('GHL_WEBHOOK_URL');
+  return {
+    ghl: ghlUrl ? (/^https:\/\/services\.leadconnectorhq\.com\/hooks\//.test(ghlUrl) ? 'connected' : 'url-looks-wrong') : 'not-set',
+    ghlCustomerEmails: env('GHL_HANDLES_CUSTOMER_EMAIL') === 'true',
+    email: env('RESEND_API_KEY') && env('EMAIL_FROM') ? 'connected' : 'not-set',
+    payments: paymentsEnabled() ? 'on' : 'off',
+  };
 }
 
 function authorized(req: Request, password: string) {
@@ -61,7 +66,7 @@ export default async (req: Request) => {
         },
       });
     }
-    return json({ orders });
+    return json({ orders, integrations: integrations() });
   }
 
   if (req.method === 'PATCH') {
@@ -80,11 +85,14 @@ export default async (req: Request) => {
       .map(([k, v]) => `${k}: ${String(record[k as keyof typeof record] ?? '') || '—'} → ${v || '—'}`);
     Object.assign(record, Object.fromEntries(Object.entries(changes).filter(([, v]) => v !== undefined)));
     if (described.length) record.history.push({ at: now, by, change: described.join('; ') });
+    if (resendGhl && !env('GHL_WEBHOOK_URL')) {
+      return json({ message: 'GoHighLevel is not connected on this deploy: add GHL_WEBHOOK_URL in Netlify environment variables, then Deploys → Trigger deploy.' }, 503);
+    }
     // Keep the GHL pipeline in step: send on manual resend or any status change.
-    if (process.env.GHL_WEBHOOK_URL && (resendGhl || described.some((d) => d.startsWith('status:')))) {
+    if (env('GHL_WEBHOOK_URL') && (resendGhl || described.some((d) => d.startsWith('status:')))) {
       const ok = await sendToGhl(record, 'order.updated');
       record.history.push({ at: now, by, change: ok ? 'Sent to GoHighLevel' : 'GoHighLevel webhook failed' });
-      if (resendGhl && !ok) { await saveOrder(record); return json({ message: 'GoHighLevel did not accept the order. Check GHL_WEBHOOK_URL.', order: record }, 502); }
+      if (resendGhl && !ok) { await saveOrder(record); return json({ message: `GoHighLevel did not accept the order (${lastGhlError() || 'no response'}). Check GHL_WEBHOOK_URL and that the workflow is published.`, order: record }, 502); }
     }
     await saveOrder(record);
     return json({ order: record });

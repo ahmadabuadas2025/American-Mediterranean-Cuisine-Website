@@ -9,7 +9,7 @@ import type { Config } from '@netlify/functions';
 import { addressErrors, evaluateOrder, orderSchema } from '../../src/lib/order';
 import { sendBusinessNotice, sendCustomerAck } from '../lib/email';
 import { ghlHandlesCustomerEmail, sendToGhl } from '../lib/ghl';
-import { catalog, json, nextInquiryId, paymentsEnabled, saveOrder, type OrderRecord } from '../lib/orders';
+import { env, catalog, json, nextInquiryId, paymentsEnabled, saveOrder, type OrderRecord } from '../lib/orders';
 import { createCheckoutSession } from '../lib/stripe';
 
 export default async (req: Request) => {
@@ -99,7 +99,7 @@ export default async (req: Request) => {
     record.path === 'checkout' || ghlHandlesCustomerEmail() ? Promise.resolve(false) : sendCustomerAck(record),
     sendToGhl(record, 'order.created'),
   ]);
-  if (process.env.GHL_WEBHOOK_URL) {
+  if (env('GHL_WEBHOOK_URL')) {
     const ok = ghl.status === 'fulfilled' && ghl.value;
     record.history.push({ at: new Date().toISOString(), by: 'website', change: ok ? 'Sent to GoHighLevel' : 'GoHighLevel webhook failed; resend from the dashboard' });
     await saveOrder(record);

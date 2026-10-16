@@ -137,6 +137,12 @@ export function toCsv(rows: OrderRecord[]) {
 export const json = (body: unknown, status = 200, headers: Record<string, string> = {}) =>
   new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', ...headers } });
 
-export const siteUrl = () => (process.env.URL || process.env.SITE_URL || 'http://localhost:8888').replace(/\/$/, '');
+declare const Netlify: { env: { get(name: string): string | undefined } } | undefined;
 
-export const paymentsEnabled = () => process.env.PAYMENTS_ENABLED === 'true' && !!process.env.STRIPE_SECRET_KEY;
+/** Environment variable from Netlify's runtime (falls back to process.env), trimmed. */
+export const env = (name: string) =>
+  ((typeof Netlify !== 'undefined' ? Netlify.env.get(name) : undefined) ?? process.env[name] ?? '').trim();
+
+export const siteUrl = () => (env('URL') || env('SITE_URL') || 'http://localhost:8888').replace(/\/$/, '');
+
+export const paymentsEnabled = () => env('PAYMENTS_ENABLED') === 'true' && !!env('STRIPE_SECRET_KEY');

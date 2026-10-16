@@ -3,7 +3,7 @@
  * Only used when PAYMENTS_ENABLED=true and STRIPE_SECRET_KEY is set.
  */
 import { createHmac, timingSafeEqual } from 'node:crypto';
-import { siteUrl, type OrderRecord } from './orders';
+import { env, siteUrl, type OrderRecord } from './orders';
 
 const cents = (n: number) => Math.round(n * 100);
 
@@ -29,7 +29,7 @@ export async function createCheckoutSession(r: OrderRecord): Promise<{ id: strin
   });
   const res = await fetch('https://api.stripe.com/v1/checkout/sessions', {
     method: 'POST',
-    headers: { authorization: `Bearer ${process.env.STRIPE_SECRET_KEY}`, 'content-type': 'application/x-www-form-urlencoded', 'idempotency-key': `checkout-${r.id}` },
+    headers: { authorization: `Bearer ${env('STRIPE_SECRET_KEY')}`, 'content-type': 'application/x-www-form-urlencoded', 'idempotency-key': `checkout-${r.id}` },
     body: form,
   });
   const body = (await res.json()) as { id?: string; url?: string; error?: { message: string } };

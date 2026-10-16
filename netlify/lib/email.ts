@@ -4,13 +4,13 @@
  * If they are missing, emails are skipped and the order is still stored.
  */
 import { formatDate, money, SERVICE_LABELS } from '../../src/lib/order';
-import { catalog, siteUrl, type OrderRecord } from './orders';
+import { env, catalog, siteUrl, type OrderRecord } from './orders';
 
 const esc = (s: unknown) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 
 async function send(to: string, subject: string, html: string, text: string, replyTo?: string) {
-  const key = process.env.RESEND_API_KEY;
-  const from = process.env.EMAIL_FROM;
+  const key = env('RESEND_API_KEY');
+  const from = env('EMAIL_FROM');
   if (!key || !from || !to) {
     console.warn(`[email] skipped "${subject}": RESEND_API_KEY, EMAIL_FROM or recipient not configured`);
     return false;
@@ -53,7 +53,7 @@ export function sendCustomerAck(r: OrderRecord) {
     <p>Need to change something? Reply to this email and mention ${esc(r.id)}.</p>
     <p><a href="${siteUrl()}/faq/" style="color:#843820">Ordering FAQ and policies</a></p>`);
   const text = `We have your request ${r.id} for ${when(r)}.\nThis is not yet a confirmed order. We will reply with an itemized quote or confirmation before you pay anything.\n\n${r.lines.map((l) => `${l.qty} x ${l.label}`).join('\n')}\n\nFood subtotal: ${money(r.subtotal)}`;
-  return send(r.contact.email, subject, html, text, process.env.BUSINESS_EMAIL);
+  return send(r.contact.email, subject, html, text, env('BUSINESS_EMAIL'));
 }
 
 /** "Payment/booking confirmed": sent only after the Stripe webhook verifies payment. */
@@ -67,12 +67,12 @@ export function sendCustomerConfirmed(r: OrderRecord) {
     ${itemsTable(r)}
     <p>Paid: <strong>${money((r.amountPaid ?? 0) / 100)}</strong>. Balance due: <strong>${money(Math.max(0, (r.total ?? 0) - (r.amountPaid ?? 0) / 100))}</strong>.</p>
     <p>Questions or changes? Reply to this email and mention ${esc(r.id)}.</p>`);
-  return send(r.contact.email, subject, html, `Order ${r.id} is confirmed for ${when(r)}.`, process.env.BUSINESS_EMAIL);
+  return send(r.contact.email, subject, html, `Order ${r.id} is confirmed for ${when(r)}.`, env('BUSINESS_EMAIL'));
 }
 
 /** Full structured record for the business inbox. */
 export function sendBusinessNotice(r: OrderRecord, headline = 'New order request') {
-  const to = process.env.BUSINESS_EMAIL ?? '';
+  const to = env('BUSINESS_EMAIL') ?? '';
   const row = (k: string, v: unknown) => (v === '' || v == null ? '' : `<tr><td style="padding:4px 12px 4px 0;color:#545a45;vertical-align:top">${esc(k)}</td><td style="padding:4px 0">${esc(v)}</td></tr>`);
   const html = wrap(`
     <h1 style="font-family:Georgia,serif;font-weight:normal;color:#2f3a1f">${esc(headline)}: ${esc(r.id)}</h1>

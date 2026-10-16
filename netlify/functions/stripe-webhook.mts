@@ -5,7 +5,7 @@
  */
 import type { Config } from '@netlify/functions';
 import { sendBusinessNotice, sendCustomerConfirmed } from '../lib/email';
-import { getOrder, json, saveOrder } from '../lib/orders';
+import { env, getOrder, json, saveOrder } from '../lib/orders';
 import { verifyStripeSignature } from '../lib/stripe';
 import { ghlHandlesCustomerEmail, sendToGhl } from '../lib/ghl';
 
@@ -15,7 +15,7 @@ interface SessionEvent {
 }
 
 export default async (req: Request) => {
-  const secret = process.env.STRIPE_WEBHOOK_SECRET;
+  const secret = env('STRIPE_WEBHOOK_SECRET');
   if (!secret) return json({ message: 'Webhook not configured' }, 503);
   const payload = await req.text();
   if (!verifyStripeSignature(payload, req.headers.get('stripe-signature'), secret)) return json({ message: 'Invalid signature' }, 400);

@@ -35,6 +35,7 @@ import '../../styles/global.css';
       </form>
 
       <div data-board hidden>
+        <ul class="mt-6 flex flex-wrap gap-2 text-sm" aria-label="Connections" data-integrations></ul>
         <div class="mt-6 flex flex-wrap items-end gap-4">
           <div>
             <label for="filter-status" class="field-label">Status</label>
@@ -113,7 +114,15 @@ import '../../styles/global.css';
           $('[data-login]').hidden = false; $('[data-board]').hidden = true; $('[data-tools]').hidden = true;
           return;
         }
-        orders = (await res.json()).orders;
+        const data = await res.json();
+        orders = data.orders;
+        const i = data.integrations ?? {};
+        const pill = (ok: boolean, text: string) => `<li class="rounded-full border px-3 py-1 font-semibold ${ok ? 'border-olive-mid bg-olive-soft text-olive' : 'border-[#8f2d14] bg-white text-[#8f2d14]'}">${ok ? '✓' : '✗'} ${esc(text)}</li>`;
+        $('[data-integrations]').innerHTML = [
+          pill(i.ghl === 'connected', i.ghl === 'connected' ? 'GoHighLevel connected' : i.ghl === 'url-looks-wrong' ? 'GoHighLevel URL looks wrong' : 'GoHighLevel not set (add GHL_WEBHOOK_URL, then redeploy)'),
+          pill(i.ghlCustomerEmails || i.email === 'connected', i.ghlCustomerEmails ? 'Customer emails sent by GoHighLevel' : i.email === 'connected' ? 'Customer emails sent by website' : 'No customer emails configured'),
+          pill(true, i.payments === 'on' ? 'Online payments on' : 'Online payments off (quotes only)'),
+        ].join('');
         $('[data-login]').hidden = true; $('[data-board]').hidden = false; $('[data-tools]').hidden = false;
         render();
       }
