@@ -71,3 +71,16 @@ describe('GoHighLevel payload', () => {
     for (const v of Object.values(p)) expect(['string', 'number', 'boolean']).toContain(typeof v);
   });
 });
+
+describe('GoHighLevel order_details block', () => {
+  it('includes the whole order in one readable field', () => {
+    const d = buildGhlPayload(record, 'order.created').order_details;
+    expect(d).toContain('ORDER AMC-2026-000042 (Quote request)');
+    expect(d).toContain('When: Wednesday, October 28, 11:30 am–12:30 pm');
+    expect(d).toContain('100 Test Street, Suite 4, Tampa, FL, 33602');
+    expect(d).toContain('12 x Classic Box (Chicken Shawarma): $203.40');
+    expect(d).toContain('DIETARY / ALLERGIES: 2 people avoid sesame');
+    expect(d).toContain('Access notes: Loading dock B');
+    expect(d).not.toMatch(/\n\n\n/);
+  });
+});

@@ -17,8 +17,35 @@ export function buildGhlPayload(r: OrderRecord, event: GhlEvent) {
   const items = r.lines
     .map((l) => `${l.qty} x ${l.label}${l.detail ? ` (${l.detail})` : ''}: ${l.total == null ? 'quoted' : money(l.total)}`)
     .join('\n');
+  const address = r.fulfillment === 'pickup' ? 'Pickup' : [r.address.street, r.address.unit, r.address.city, 'FL', r.address.zip].filter(Boolean).join(', ');
+  const totalDisplay = r.total == null ? `${money(r.subtotal)} food subtotal (final total in quote)` : money(r.total);
+  const unit = r.serviceType === 'event' ? 'guests' : r.serviceType === 'family' || r.serviceType === 'trays' ? 'people' : 'meals';
+  // One ready-to-read block, so GHL needs a single custom field to show the whole order.
+  const details = [
+    `ORDER ${r.id} (${PATH_LABEL[r.path]})`,
+    `${SERVICE_LABELS[r.serviceType]} · ${r.occasion} · ${r.count} ${unit}`,
+    `When: ${formatDate(r.date)}, ${r.timeWindowLabel}`,
+    `${r.fulfillment === 'pickup' ? 'Pickup' : 'Delivery'} (${r.serviceLevel}): ${address}`,
+    '',
+    'ITEMS',
+    items,
+    `Estimated: ${totalDisplay}`,
+    r.event.addOns.length ? `Add-ons requested: ${r.event.addOns.join(', ')}` : null,
+    '',
+    r.dietaryNotes ? `DIETARY / ALLERGIES: ${r.dietaryNotes}` : null,
+    r.accessNotes ? `Access notes: ${r.accessNotes}` : null,
+    r.instructions ? `Instructions: ${r.instructions}` : null,
+    `Contact: ${r.contact.name}${r.contact.company ? `, ${r.contact.company}` : ''} · ${r.contact.phone} · ${r.contact.email} · prefers ${r.contact.preference}`,
+    r.reasons.length ? `\nWhy it is a quote: ${r.reasons.join(' ')}` : null,
+  ]
+    .filter((line): line is string => line !== null)
+    .join('\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
   return {
     event,
+    order_details: details,
+    full_address: address,
     order_id: r.id,
     order_status: r.status,
     payment_status: r.paymentStatus,
@@ -54,7 +81,7 @@ export function buildGhlPayload(r: OrderRecord, event: GhlEvent) {
     delivery_fee: r.deliveryFee ?? '',
     tax: r.tax ?? '',
     total: r.total ?? '',
-    total_display: r.total == null ? `${money(r.subtotal)} food subtotal (final total in quote)` : money(r.total),
+    total_display: totalDisplay,
     amount_paid: r.amountPaid ? r.amountPaid / 100 : '',
     quote_reasons: r.reasons.join(' '),
 
