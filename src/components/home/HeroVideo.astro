@@ -55,23 +55,16 @@ const brandCards = [
     </ul>
   </div>
 
-  {hasVideo && (
-    <button type="button" class="absolute right-4 top-[calc(var(--header-h)+1rem)] inline-flex min-h-11 items-center gap-2 rounded-full border border-white/30 bg-black/25 px-4 text-sm font-semibold text-ivory backdrop-blur md:right-8" data-hero-toggle hidden aria-pressed="false">
-      <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" data-icon-pause><rect x="2" y="1" width="3.5" height="12" rx="1" fill="currentColor" /><rect x="8.5" y="1" width="3.5" height="12" rx="1" fill="currentColor" /></svg>
-      <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" data-icon-play class="hidden"><path d="M3 1.5v11l9-5.5z" fill="currentColor" /></svg>
-      <span data-label>Pause video</span>
-    </button>
-  )}
 </section>
 
 <script>
   function initHero() {
     const video = document.querySelector<HTMLVideoElement>('[data-hero-video]');
-    const toggle = document.querySelector<HTMLButtonElement>('[data-hero-toggle]');
     if (!video) return;
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
-    if (reduced || saveData) return; // poster only
+    // Plays automatically, muted and looping. Reduced-motion and Save-Data visitors get the poster only.
+    if (reduced || saveData) return;
 
     const mobile = matchMedia('(max-width: 767px)').matches;
     const { webm, mp4, mobileMp4 } = video.dataset;
@@ -92,17 +85,6 @@ const brandCards = [
     if (document.readyState === 'complete') idle();
     else window.addEventListener('load', idle, { once: true });
 
-    if (!toggle) return;
-    toggle.hidden = false;
-    const label = toggle.querySelector('[data-label]')!;
-    toggle.addEventListener('click', () => {
-      const pause = !video.paused;
-      if (pause) video.pause(); else video.play().catch(() => {});
-      toggle.setAttribute('aria-pressed', String(pause));
-      label.textContent = pause ? 'Play video' : 'Pause video';
-      toggle.querySelector('[data-icon-pause]')!.classList.toggle('hidden', pause);
-      toggle.querySelector('[data-icon-play]')!.classList.toggle('hidden', !pause);
-    });
   }
   document.addEventListener('astro:page-load', initHero);
 </script>
