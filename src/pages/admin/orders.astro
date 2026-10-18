@@ -18,7 +18,10 @@ import '../../styles/global.css';
   <body class="bg-ivory">
     <main class="container-x py-10" id="main">
       <div class="flex flex-wrap items-center justify-between gap-4">
-        <h1 class="h-md">Orders and inquiries</h1>
+        <div>
+          <h1 class="h-md">Order history</h1>
+          <p class="mt-1 text-sm text-muted">Read-only record of every website order. Orders are managed in GoHighLevel / the LeadConnector app.</p>
+        </div>
         <div class="flex flex-wrap gap-2" data-tools hidden>
           <button type="button" class="btn btn-ghost min-h-11" data-refresh>Refresh</button>
           <button type="button" class="btn btn-olive min-h-11" data-csv>Download CSV</button>
@@ -37,18 +40,6 @@ import '../../styles/global.css';
       <div data-board hidden>
         <ul class="mt-6 flex flex-wrap gap-2 text-sm" aria-label="Connections" data-integrations></ul>
         <div class="mt-6 flex flex-wrap items-end gap-4">
-          <div>
-            <label for="filter-status" class="field-label">Status</label>
-            <select id="filter-status" class="input" data-filter-status>
-              <option value="">All</option>
-              <option value="request_received">Request received</option>
-              <option value="quote_sent">Quote sent</option>
-              <option value="awaiting_payment">Awaiting payment</option>
-              <option value="confirmed">Confirmed</option>
-              <option value="completed">Completed</option>
-              <option value="cancelled">Cancelled</option>
-            </select>
-          </div>
           <div class="flex-1">
             <label for="filter-q" class="field-label">Search</label>
             <input id="filter-q" class="input" placeholder="Name, ID, company" data-filter-q />
@@ -60,7 +51,7 @@ import '../../styles/global.css';
             <thead class="border-b border-sand text-muted">
               <tr>
                 <th scope="col" class="p-3">ID / submitted</th><th scope="col" class="p-3">Customer</th><th scope="col" class="p-3">Service</th>
-                <th scope="col" class="p-3">Date</th><th scope="col" class="p-3">Value</th><th scope="col" class="p-3">Status</th><th scope="col" class="p-3">Follow-up</th>
+                <th scope="col" class="p-3">Date</th><th scope="col" class="p-3">Value</th><th scope="col" class="p-3">GoHighLevel</th>
               </tr>
             </thead>
             <tbody data-rows></tbody>
@@ -75,20 +66,8 @@ import '../../styles/global.css';
             <button value="cancel" class="grid size-11 place-items-center rounded-full border border-sand" aria-label="Close">×</button>
           </div>
           <div class="grid gap-1 text-sm" data-detail-body></div>
-          <div class="grid gap-4 sm:grid-cols-3">
-            <div><label class="field-label" for="d-status">Status</label>
-              <select class="input" id="d-status" name="status">
-                <option value="request_received">Request received</option><option value="quote_sent">Quote sent</option>
-                <option value="awaiting_payment">Awaiting payment</option><option value="confirmed">Confirmed</option>
-                <option value="completed">Completed</option><option value="cancelled">Cancelled</option>
-              </select></div>
-            <div><label class="field-label" for="d-owner">Follow-up owner</label><input class="input" id="d-owner" name="followUpOwner" /></div>
-            <div><label class="field-label" for="d-next">Next follow-up</label><input class="input" id="d-next" name="nextFollowUp" type="date" /></div>
-          </div>
-          <div><label class="field-label" for="d-notes">Internal notes</label><textarea class="input" id="d-notes" name="internalNotes" rows="3"></textarea></div>
-          <p class="field-error" data-detail-error role="alert" hidden></p>
-          <div class="flex flex-wrap gap-2"><button type="button" class="btn btn-primary" data-save>Save</button><button type="button" class="btn btn-ghost" data-ghl>Send to GoHighLevel</button><button value="cancel" class="btn btn-ghost">Close</button></div>
-          <details><summary class="cursor-pointer font-semibold">Change history</summary><ul class="mt-2 space-y-1 text-sm text-muted" data-history></ul></details>
+          <div class="flex flex-wrap gap-2"><button value="cancel" class="btn btn-ghost">Close</button></div>
+          <details open><summary class="cursor-pointer font-semibold">History</summary><ul class="mt-2 space-y-1 text-sm text-muted" data-history></ul></details>
         </form>
       </dialog>
     </main>
@@ -100,7 +79,7 @@ import '../../styles/global.css';
       const esc = (s: unknown) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
       const money = (n: number | null) => (n == null ? '—' : `$${n.toFixed(2)}`);
       let orders: Order[] = [];
-      let current: Order | null = null;
+      let current: Order | null = null; // order shown in the detail dialog
       const pw = () => sessionStorage.getItem(KEY) ?? '';
       const api = (init: RequestInit = {}, q = '') => fetch(`/api/admin/orders${q}`, { ...init, headers: { ...(init.headers ?? {}), authorization: `Bearer ${pw()}` } });
 
@@ -128,10 +107,15 @@ import '../../styles/global.css';
         render();
       }
 
+      const ghlStatus = (o: Order) => {
+        const h = o.history.map((x: Order) => x.change).reverse();
+        const last = h.find((c: string) => c.startsWith('Sent to GoHighLevel') || c.startsWith('GoHighLevel webhook failed'));
+        return !last ? '—' : last.startsWith('Sent') ? '✓ sent' : '<span class="font-semibold text-[#8f2d14]">✗ not sent</span>';
+      };
+
       function render() {
-        const st = $<HTMLSelectElement>('[data-filter-status]').value;
-        const q = $<HTMLInputElement>('[data-filter-q]').value.toLowerCase();
-        const rows = orders.filter((o) => (!st || o.status === st) && (!q || `${o.id} ${o.contact.name} ${o.contact.company} ${o.contact.email}`.toLowerCase().includes(q)));
+                const q = $<HTMLInputElement>('[data-filter-q]').value.toLowerCase();
+        const rows = orders.filter((o) => (!q || `${o.id} ${o.contact.name} ${o.contact.company} ${o.contact.email}`.toLowerCase().includes(q)));
         $('[data-count]').textContent = `${rows.length} of ${orders.length} orders`;
         $('[data-rows]').innerHTML = rows.map((o) => `
           <tr class="border-b border-sand/70 align-top">
@@ -140,9 +124,8 @@ import '../../styles/global.css';
             <td class="p-3">${esc(o.serviceType)}<br><span class="text-muted">${esc(o.count)} · ${esc(o.path)}</span></td>
             <td class="p-3">${esc(o.date)}<br><span class="text-muted">${esc(o.timeWindowLabel)}</span></td>
             <td class="p-3">${money(o.total ?? o.subtotal)}</td>
-            <td class="p-3">${esc(o.status.replace(/_/g, ' '))}<br><span class="text-muted">payment: ${esc(o.paymentStatus)}</span></td>
-            <td class="p-3">${esc(o.followUpOwner || '—')}<br><span class="text-muted">${esc(o.nextFollowUp)}</span></td>
-          </tr>`).join('') || '<tr><td class="p-6 text-muted" colspan="7">No orders match. New requests from the order builder appear here.</td></tr>';
+            <td class="p-3">${ghlStatus(o)}<br><span class="text-muted">${o.ghlInvoiceLink ? `<a class="underline" target="_blank" rel="noopener" href="${esc(o.ghlInvoiceLink)}">draft invoice</a>` : esc(o.ghlInvoiceStatus ?? '')}</span></td>
+          </tr>`).join('') || '<tr><td class="p-6 text-muted" colspan="6">No orders match. New requests from the order builder appear here.</td></tr>';
       }
 
       function open(id: string) {
@@ -161,36 +144,8 @@ import '../../styles/global.css';
           line('Marketing consent', o.consentMarketing ? 'yes' : 'no'),
           o.ghlInvoiceLink ? `<p><strong>GHL draft invoice:</strong> <a class="underline" target="_blank" rel="noopener" href="${esc(o.ghlInvoiceLink)}">open in GoHighLevel</a></p>` : line('GHL draft invoice', o.ghlInvoiceStatus),
         ].join('');
-        const f = $<HTMLFormElement>('[data-detail-form]');
-        (f.elements.namedItem('status') as HTMLSelectElement).value = o.status;
-        (f.elements.namedItem('followUpOwner') as HTMLInputElement).value = o.followUpOwner;
-        (f.elements.namedItem('nextFollowUp') as HTMLInputElement).value = o.nextFollowUp;
-        (f.elements.namedItem('internalNotes') as HTMLTextAreaElement).value = o.internalNotes;
         $('[data-history]').innerHTML = o.history.map((h: Order) => `<li>${esc(new Date(h.at).toLocaleString())} · ${esc(h.by)}: ${esc(h.change)}</li>`).join('');
-        $('[data-detail-error]').hidden = true;
         $<HTMLDialogElement>('[data-detail]').showModal();
-      }
-
-      async function resendGhl() {
-        if (!current) return;
-        const res = await api({ method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id: current.id, resendGhl: true }) });
-        const body = await res.json().catch(() => ({}));
-        const e = $('[data-detail-error]');
-        e.textContent = res.ok ? 'Sent to GoHighLevel.' : (body.message ?? 'Could not send');
-        e.hidden = false;
-        if (body.order) { orders = orders.map((o) => (o.id === body.order.id ? body.order : o)); current = body.order; }
-      }
-
-      async function save() {
-        if (!current) return;
-        const f = $<HTMLFormElement>('[data-detail-form]');
-        const v = (n: string) => (f.elements.namedItem(n) as HTMLInputElement).value;
-        const res = await api({ method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id: current.id, status: v('status'), followUpOwner: v('followUpOwner'), nextFollowUp: v('nextFollowUp'), internalNotes: v('internalNotes') }) });
-        const body = await res.json().catch(() => ({}));
-        if (!res.ok) { const e = $('[data-detail-error]'); e.textContent = body.message ?? 'Could not save'; e.hidden = false; return; }
-        orders = orders.map((o) => (o.id === body.order.id ? body.order : o));
-        $<HTMLDialogElement>('[data-detail]').close();
-        render();
       }
 
       async function csv() {
@@ -206,11 +161,8 @@ import '../../styles/global.css';
       $('[data-refresh]').addEventListener('click', load);
       $('[data-csv]').addEventListener('click', csv);
       $('[data-logout]').addEventListener('click', () => { sessionStorage.removeItem(KEY); location.reload(); });
-      $('[data-filter-status]').addEventListener('change', render);
       $('[data-filter-q]').addEventListener('input', render);
       $('[data-rows]').addEventListener('click', (e) => { const b = (e.target as HTMLElement).closest<HTMLElement>('[data-open]'); if (b) open(b.dataset.open!); });
-      $('[data-save]').addEventListener('click', save);
-      $('[data-ghl]').addEventListener('click', resendGhl);
       if (pw()) load();
     </script>
   </body>
