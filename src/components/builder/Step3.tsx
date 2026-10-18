@@ -29,7 +29,7 @@ export default function Step3({ c, d, set, errors }: Props) {
         <Field k="contact.email" label="Email" required error={errors['contact.email']}>
           <input className="input" type="email" autoComplete="email" value={d.contact.email} onChange={(e) => contact({ email: e.target.value })} {...aria('contact.email', errors['contact.email'])} />
         </Field>
-        <Field k="contact.phone" label="Phone" required error={errors['contact.phone']} hint="For delivery day questions">
+        <Field k="contact.phone" label="Phone" required error={errors['contact.phone']} hint="US number, e.g. (813) 555-0100. The +1 is optional.">
           <input className="input" type="tel" autoComplete="tel" value={d.contact.phone} onChange={(e) => contact({ phone: e.target.value })} {...aria('contact.phone', errors['contact.phone'], true)} />
         </Field>
         <div className="sm:col-span-2">

@@ -67,7 +67,7 @@ export const orderSchema = z
     contact: z.object({
       name: trimmed(120).min(2, 'Enter your name'),
       email: z.email('Enter a valid email address').max(200),
-      phone: trimmed(40).refine((v) => toE164(v) !== '', 'Enter a 10-digit phone number, e.g. (813) 555-0100, or include the country code, e.g. +44 20 7946 0958'),
+      phone: trimmed(40).refine((v) => toE164(v) !== '', 'Enter a 10-digit US phone number, e.g. (813) 555-0100 (the +1 is optional)'),
       preference: z.enum(['email', 'phone', 'text']),
       company: trimmed(120).optional().default(''),
     }),
