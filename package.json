@@ -11,7 +11,8 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "netlify:dev": "npx netlify dev",
-    "media": "node scripts/process-media.mjs"
+    "media": "node scripts/process-media.mjs",
+    "ghl:products": "npm run catalog && tsx scripts/export-ghl-products.ts"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",
