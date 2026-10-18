@@ -142,3 +142,11 @@ describe('schema', () => {
     expect(addressErrors('pickup', {})).toEqual({});
   });
 });
+
+describe('phone validation', () => {
+  it('rejects a phone number GHL could not use', () => {
+    const r = orderSchema.safeParse({ serviceType: 'office', occasion: 'x', count: 12, date: '2030-01-10', timeWindow: '11:30', fulfillment: 'pickup', serviceLevel: 'drop-off', contact: { name: 'A B', email: 'a@b.co', phone: '555-0100', preference: 'email' }, consentService: true });
+    expect(r.success).toBe(false);
+    expect(r.error!.issues.map((i) => i.path.join('.'))).toContain('contact.phone');
+  });
+});

@@ -8,7 +8,9 @@
  * scopes contacts.write and invoices.write (locations.readonly optional), plus
  * the Location ID. Without them this module does nothing.
  */
-import { formatDate, money } from '../../src/lib/order';
+import { formatDate, money, toE164 } from '../../src/lib/order';
+
+export { toE164 };
 import { catalog, env, siteUrl, type OrderRecord } from './orders';
 
 const API = 'https://services.leadconnectorhq.com';
@@ -32,6 +34,7 @@ async function call<T>(method: string, path: string, body?: unknown): Promise<T>
   if (!res.ok) throw new Error(`GHL ${method} ${path} → ${res.status}: ${text.slice(0, 200)}`);
   return (text ? JSON.parse(text) : {}) as T;
 }
+
 
 /** Invoice line items from the priced order lines (quoted extras go in the notes). */
 export function invoiceItems(r: OrderRecord) {
@@ -99,12 +102,12 @@ export async function createDraftInvoice(r: OrderRecord): Promise<DraftResult> {
   const locationId = env('GHL_LOCATION_ID');
   try {
     const [first, ...rest] = r.contact.name.trim().split(/\s+/);
-    const { contact } = await call<{ contact: { id: string } }>('POST', '/contacts/upsert', {
+    const { contact } = await call<{ contact: { id: string; phone?: string } }>('POST', '/contacts/upsert', {
       locationId,
       firstName: first,
       lastName: rest.join(' ') || undefined,
       email: r.contact.email,
-      phone: r.contact.phone,
+      phone: toE164(r.contact.phone) || r.contact.phone,
       companyName: r.contact.company || undefined,
       address1: r.address.street || undefined,
       city: r.address.city || undefined,
@@ -113,6 +116,8 @@ export async function createDraftInvoice(r: OrderRecord): Promise<DraftResult> {
       source: 'Website order',
     });
     const today = new Intl.DateTimeFormat('en-CA', { timeZone: catalog.rules.timezone }).format(new Date());
+    // GHL stores the contact's phone normalized; prefer it, else normalize what the customer typed.
+    const phone = (contact.phone && contact.phone.startsWith('+') ? contact.phone : '') || toE164(r.contact.phone);
     const invoice = await call<{ _id: string }>('POST', '/invoices/', {
       altId: locationId,
       altType: 'location',
@@ -127,13 +132,13 @@ export async function createDraftInvoice(r: OrderRecord): Promise<DraftResult> {
         id: contact.id,
         name: r.contact.name,
         email: r.contact.email,
-        phoneNo: r.contact.phone,
+        phoneNo: phone,
         companyName: r.contact.company || undefined,
         address: r.fulfillment === 'delivery'
           ? { addressLine1: r.address.street, addressLine2: r.address.unit || undefined, city: r.address.city, state: 'FL', postalCode: r.address.zip, countryCode: 'US' }
           : undefined,
       },
-      sentTo: { email: [r.contact.email], phoneNo: [r.contact.phone] },
+      sentTo: { email: [r.contact.email], phoneNo: phone ? [phone] : [] },
       issueDate: today,
       dueDate: dueDate(r),
       liveMode: env('GHL_INVOICE_TEST_MODE') !== 'true',

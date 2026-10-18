@@ -79,3 +79,32 @@ describe('createDraftInvoice', () => {
     expect(res.status).toBe('failed');
   });
 });
+
+describe('phone numbers for GHL (E.164)', () => {
+  it('normalizes the ways customers type US numbers', async () => {
+    const { toE164 } = await import('../netlify/lib/ghl-api');
+    expect(toE164('(813) 555-0100')).toBe('+18135550100');
+    expect(toE164('813.555.0100')).toBe('+18135550100');
+    expect(toE164('1-813-555-0100')).toBe('+18135550100');
+    expect(toE164('+44 20 7946 0958')).toBe('+442079460958');
+    expect(toE164('555-0100')).toBe('');
+  });
+
+  it('sends the invoice with an E.164 phone even when typed with brackets', async () => {
+    process.env.GHL_API_TOKEN = 'pit-test';
+    process.env.GHL_LOCATION_ID = 'LOC123';
+    const bodies: Record<string, any>[] = [];
+    vi.stubGlobal('fetch', vi.fn(async (url: string, init: RequestInit) => {
+      if (init.body) bodies.push(JSON.parse(init.body as string));
+      if (url.endsWith('/contacts/upsert')) return new Response(JSON.stringify({ contact: { id: 'C1' } }));
+      if (url.endsWith('/invoices/')) return new Response(JSON.stringify({ _id: 'I1' }));
+      return new Response('{}', { status: 404 });
+    }));
+    const res = await createDraftInvoice({ ...base, contact: { ...base.contact, phone: '(813) 555-0100' } });
+    expect(res.status).toBe('created');
+    const inv = bodies.find((b) => b.altType === 'location')!;
+    expect(inv.contactDetails.phoneNo).toBe('+18135550100');
+    expect(inv.sentTo.phoneNo).toEqual(['+18135550100']);
+    vi.unstubAllGlobals();
+  });
+});

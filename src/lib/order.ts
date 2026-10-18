@@ -29,6 +29,20 @@ export const lineSchema = z.discriminatedUnion('kind', [
 ]);
 export type Line = z.infer<typeof lineSchema>;
 
+/**
+ * Phone number in E.164 (+18135550100), which GHL invoices require.
+ * US numbers typed as (813) 555-0100, 813.555.0100 or 1-813-555-0100 become +1…;
+ * numbers typed with a leading + keep their country code. Returns '' if unusable.
+ */
+export function toE164(raw: string) {
+  const s = (raw ?? '').trim();
+  const digits = s.replace(/\D/g, '');
+  if (s.startsWith('+')) return digits.length >= 8 && digits.length <= 15 ? `+${digits}` : '';
+  if (digits.length === 10) return `+1${digits}`;
+  if (digits.length === 11 && digits.startsWith('1')) return `+${digits}`;
+  return '';
+}
+
 const ymd = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Choose a date');
 const trimmed = (max: number) => z.string().trim().max(max);
 
@@ -53,7 +67,7 @@ export const orderSchema = z
     contact: z.object({
       name: trimmed(120).min(2, 'Enter your name'),
       email: z.email('Enter a valid email address').max(200),
-      phone: trimmed(40).regex(/^[+()\d\s.-]{7,}$/, 'Enter a phone number we can reach you on'),
+      phone: trimmed(40).refine((v) => toE164(v) !== '', 'Enter a 10-digit phone number, e.g. (813) 555-0100, or include the country code, e.g. +44 20 7946 0958'),
       preference: z.enum(['email', 'phone', 'text']),
       company: trimmed(120).optional().default(''),
     }),
