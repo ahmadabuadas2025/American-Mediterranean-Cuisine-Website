@@ -10,12 +10,12 @@ Every photo and video on the site is currently an **AI illustration** generated 
 
 | File | Model, duration, ratio | Prompt |
 |---|---|---|
-| `public/media/video/hero.{webm,mp4}`, `hero-mobile.mp4` | Kling 3.0 std, 10 s, 16:9, image-to-video from `hero` still; exported as a forward-then-reverse loop (20 s) | Very slow, smooth overhead push-in over the Mediterranean catering spread, gentle wisps of steam from the warm pita and shawarma, light shifting softly across the ivory linen. Calm, loopable, no cuts, no hands, no people. |
+| `public/media/video/hero-montage.{webm,mp4}`, `hero-montage-mobile.mp4` | Montage, 17 s loop, built by `scripts/build-hero-montage.mjs` | The hero spread (Kling 3.0, 10 s, image-to-video from the `hero` still) followed by the pita, lunchbox and buffet clips, each upscaled to 1080p with Higgsfield's ByteDance video upscaler (≈5 credits total), joined with 0.8 s cross-dissolves and ending on the spread's first frame so the loop is seamless. Desktop 1920×1080, phone 608×1080 portrait crop. |
 | `clip-pita.*` (Trays page) | Kling 3.0 std, 5 s, 16:9 | Close-up, slow motion: hands tear a warm, soft pita in half and gentle steam rises, over a bowl of hummus on ivory linen. |
 | `clip-buffet.*` (Events page) | Kling 3.0 std, 5 s, 16:9 | A full aluminum catering tray of chicken shawarma over rice is placed onto a buffet table between polished chafing dishes, slow dolly. Hands only. |
 | `clip-lunchbox.*` (Lunchboxes page) | Kling 3.0 std, 5 s, 16:9 | Hands close the lid of a kraft lunchbox filled with shawarma, salad and hummus, then press a plain blank label onto the lid. |
 
-Encoding: H.264 MP4 (CRF 28, faststart) and VP9 WebM (CRF 40) at 1600 px, plus 720 px mobile MP4. No audio track. Hero total stays under 2.5 MB.
+Encoding: section clips are H.264 MP4 and VP9 WebM at 1600 px plus a 720 px mobile MP4. The hero montage is WebM 2.3 MB / MP4 2.6 MB at 1080p and a 0.9 MB portrait MP4 for phones. No audio track. Rebuild the hero with `FFMPEG=/path/to/ffmpeg node scripts/build-hero-montage.mjs --preview`.
 
 ## Stills (`media-src/<name>.png` → `public/media/photos/<name>*.{avif,webp}`)
 
