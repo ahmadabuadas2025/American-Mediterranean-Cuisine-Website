@@ -9,6 +9,7 @@ import type { Config } from '@netlify/functions';
 import { addressErrors, evaluateOrder, orderSchema } from '../../src/lib/order';
 import { sendBusinessNotice, sendCustomerAck } from '../lib/email';
 import { ghlHandlesCustomerEmail, sendToGhl } from '../lib/ghl';
+import { createDraftInvoice, draftSummary, ghlApiConfigured } from '../lib/ghl-api';
 import { env, catalog, json, nextInquiryId, paymentsEnabled, saveOrder, type OrderRecord } from '../lib/orders';
 import { createCheckoutSession } from '../lib/stripe';
 
@@ -94,16 +95,26 @@ export default async (req: Request) => {
   }
 
   await saveOrder(record);
+  // Draft invoice first (when the GHL API is configured), so the webhook can carry its link.
+  const toGhl = async () => {
+    if (ghlApiConfigured() && record.path !== 'checkout') {
+      const draft = await createDraftInvoice(record);
+      record.ghlInvoiceStatus = draft.status === 'created' ? 'draft created' : draft.status === 'skipped' ? 'not created' : 'draft failed';
+      if (draft.status === 'created') { record.ghlInvoiceId = draft.invoiceId; record.ghlInvoiceLink = draft.link; }
+      record.history.push({ at: new Date().toISOString(), by: 'website', change: draftSummary(draft, record) });
+    }
+    return sendToGhl(record, 'order.created');
+  };
   const [, , ghl] = await Promise.allSettled([
     sendBusinessNotice(record, record.path === 'checkout' ? 'New order awaiting payment' : record.path === 'conflict' ? 'New request with a date conflict' : 'New quote request'),
     record.path === 'checkout' || ghlHandlesCustomerEmail() ? Promise.resolve(false) : sendCustomerAck(record),
-    sendToGhl(record, 'order.created'),
+    toGhl(),
   ]);
   if (env('GHL_WEBHOOK_URL')) {
     const ok = ghl.status === 'fulfilled' && ghl.value;
     record.history.push({ at: new Date().toISOString(), by: 'website', change: ok ? 'Sent to GoHighLevel' : 'GoHighLevel webhook failed; resend from the dashboard' });
-    await saveOrder(record);
   }
+  if (env('GHL_WEBHOOK_URL') || ghlApiConfigured()) await saveOrder(record);
 
   return json({ ok: true, id, path: record.path, status: record.status, reasons: record.reasons, checkoutUrl });
 };

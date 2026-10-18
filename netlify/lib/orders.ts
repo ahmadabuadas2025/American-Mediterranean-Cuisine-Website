@@ -48,6 +48,10 @@ export interface OrderRecord {
   nextFollowUp: string;
   internalNotes: string;
   stripeSessionId?: string;
+  /** GoHighLevel draft invoice created for this order */
+  ghlInvoiceId?: string;
+  ghlInvoiceLink?: string;
+  ghlInvoiceStatus?: string;
   amountPaid?: number;
   history: { at: string; by: string; change: string }[];
 }

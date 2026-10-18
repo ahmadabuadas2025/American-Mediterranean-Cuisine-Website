@@ -9,6 +9,7 @@ import type { Config } from '@netlify/functions';
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { z } from 'zod';
 import { lastGhlError, sendToGhl } from '../lib/ghl';
+import { createDraftInvoice, draftSummary, ghlApiConfigured } from '../lib/ghl-api';
 import { env, getOrder, json, listOrders, paymentsEnabled, saveOrder, STATUSES, toCsv } from '../lib/orders';
 
 const digest = (s: string) => createHash('sha256').update(s).digest();
@@ -20,6 +21,7 @@ function integrations() {
   const ghlUrl = env('GHL_WEBHOOK_URL');
   return {
     ghl: ghlUrl ? (/^https:\/\/services\.leadconnectorhq\.com\/hooks\//.test(ghlUrl) ? 'connected' : 'url-looks-wrong') : 'not-set',
+    ghlDraftInvoices: ghlApiConfigured(),
     ghlCustomerEmails: env('GHL_HANDLES_CUSTOMER_EMAIL') === 'true',
     email: env('RESEND_API_KEY') && env('EMAIL_FROM') ? 'connected' : 'not-set',
     payments: paymentsEnabled() ? 'on' : 'off',
@@ -87,6 +89,13 @@ export default async (req: Request) => {
     if (described.length) record.history.push({ at: now, by, change: described.join('; ') });
     if (resendGhl && !env('GHL_WEBHOOK_URL')) {
       return json({ message: 'GoHighLevel is not connected on this deploy: add GHL_WEBHOOK_URL in Netlify environment variables, then Deploys → Trigger deploy.' }, 503);
+    }
+    // A manual resend also creates the draft invoice if it is missing.
+    if (resendGhl && ghlApiConfigured() && !record.ghlInvoiceId && record.path !== 'checkout') {
+      const draft = await createDraftInvoice(record);
+      record.ghlInvoiceStatus = draft.status === 'created' ? 'draft created' : draft.status === 'skipped' ? 'not created' : 'draft failed';
+      if (draft.status === 'created') { record.ghlInvoiceId = draft.invoiceId; record.ghlInvoiceLink = draft.link; }
+      record.history.push({ at: now, by, change: draftSummary(draft, record) });
     }
     // Keep the GHL pipeline in step: send on manual resend or any status change.
     if (env('GHL_WEBHOOK_URL') && (resendGhl || described.some((d) => d.startsWith('status:')))) {

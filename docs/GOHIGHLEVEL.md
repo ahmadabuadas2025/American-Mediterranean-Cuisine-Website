@@ -108,6 +108,17 @@ With GHL handling customer emails, you don't need Resend for customers. You can 
 
 The website's own Stripe checkout stays off (`PAYMENTS_ENABLED` unset), so customers are never charged before you confirm.
 
+## Step 5b: automatic draft invoices (optional, recommended)
+
+With an API token, the website creates a **draft invoice** in GHL for every order, with the exact items, quantities and prices the customer chose. Nothing goes to the customer automatically: the owner opens the draft, adds delivery (and tax), and presses **Send**. The *Invoice sent* workflow then moves the card to *Awaiting Payment*.
+
+1. GHL → **Settings → Private Integrations → Create new integration** ("Website orders").
+2. Scopes: **contacts.write**, **invoices.write**, and optionally **locations.readonly** (puts your logo, phone and address on the invoice).
+3. Copy the token. In Netlify add `GHL_API_TOKEN` (the token) and `GHL_LOCATION_ID` (the ID after `/location/` in your GHL web address), then **Trigger deploy**.
+4. The webhook now also carries `invoice_link` and `invoice_status`. Put `{{invoice_link}}` in the owner's Internal Notification so one tap opens the draft.
+
+Draft invoices are named `AMC-2026-000123 quote`. Event consultations with nothing priced get no draft. Status is shown at the top of `/admin/orders/` and on each order.
+
 ## Step 6: useful follow-up workflows (optional)
 
 - **Reminder:** 2 days before `event_date`, text or email the customer with delivery details.

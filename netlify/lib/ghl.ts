@@ -98,6 +98,9 @@ export function buildGhlPayload(r: OrderRecord, event: GhlEvent) {
     referrer: r.source.referrer ?? '',
 
     admin_link: `${siteUrl()}/admin/orders/`,
+    invoice_id: r.ghlInvoiceId ?? '',
+    invoice_link: r.ghlInvoiceLink ?? '',
+    invoice_status: r.ghlInvoiceStatus ?? 'not created',
     tags: ['website-order', `service-${r.serviceType}`, `path-${r.path}`, ...(r.consentMarketing ? ['marketing-opt-in'] : [])].join(','),
   };
 }

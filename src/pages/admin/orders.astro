@@ -121,6 +121,7 @@ import '../../styles/global.css';
         $('[data-integrations]').innerHTML = [
           pill(i.ghl === 'connected', i.ghl === 'connected' ? 'GoHighLevel connected' : i.ghl === 'url-looks-wrong' ? 'GoHighLevel URL looks wrong' : 'GoHighLevel not set (add GHL_WEBHOOK_URL, then redeploy)'),
           pill(i.ghlCustomerEmails || i.email === 'connected', i.ghlCustomerEmails ? 'Customer emails sent by GoHighLevel' : i.email === 'connected' ? 'Customer emails sent by website' : 'No customer emails configured'),
+          pill(!!i.ghlDraftInvoices, i.ghlDraftInvoices ? 'Draft invoices created in GoHighLevel' : 'Draft invoices off (add GHL_API_TOKEN + GHL_LOCATION_ID)'),
           pill(true, i.payments === 'on' ? 'Online payments on' : 'Online payments off (quotes only)'),
         ].join('');
         $('[data-login]').hidden = true; $('[data-board]').hidden = false; $('[data-tools]').hidden = false;
@@ -158,6 +159,7 @@ import '../../styles/global.css';
           line('Subtotal', money(o.subtotal)), line('Dietary / allergens', o.dietaryNotes), line('Access', o.accessNotes), line('Instructions', o.instructions),
           line('Why quote', o.reasons.join(' ')), line('Source', [o.source.utm_source, o.source.utm_campaign, o.source.referrer].filter(Boolean).join(' / ')),
           line('Marketing consent', o.consentMarketing ? 'yes' : 'no'),
+          o.ghlInvoiceLink ? `<p><strong>GHL draft invoice:</strong> <a class="underline" target="_blank" rel="noopener" href="${esc(o.ghlInvoiceLink)}">open in GoHighLevel</a></p>` : line('GHL draft invoice', o.ghlInvoiceStatus),
         ].join('');
         const f = $<HTMLFormElement>('[data-detail-form]');
         (f.elements.namedItem('status') as HTMLSelectElement).value = o.status;
