@@ -13,7 +13,11 @@ The website sends to GHL:
 |---|---|
 | `order.created` | A customer submits the order builder |
 | `order.paid` | Stripe confirms an online payment (only if online checkout is on) |
-| `order.updated` | Staff change an order's status in `/admin/orders/`, or press **Send to GoHighLevel** |
+| `order.updated` | Staff change an order's status in `/admin/orders/` (not needed if the owner works only in GHL; the workflow can ignore it) |
+
+Pressing **Send to GoHighLevel** in `/admin/orders/` resends the order as `order.created`, so a missed order still creates its card and alert.
+
+**Recommended workflow when the owner works only in the LeadConnector app:** keep just the `order.created` branch (plus *None → End*), and move cards with two invoice workflows: *Invoice sent → Awaiting Payment* and *Invoice paid → Confirmed (Paid)*.
 
 The order is always saved on the website first. If GHL is down, the customer still gets their order number, the order history shows "GoHighLevel webhook failed", and staff can press **Send to GoHighLevel** later.
 

@@ -90,7 +90,9 @@ export default async (req: Request) => {
     }
     // Keep the GHL pipeline in step: send on manual resend or any status change.
     if (env('GHL_WEBHOOK_URL') && (resendGhl || described.some((d) => d.startsWith('status:')))) {
-      const ok = await sendToGhl(record, 'order.updated');
+      // A manual resend is for orders GHL missed, so it is delivered as a new order
+      // (the GHL workflow only builds cards and alerts for order.created).
+      const ok = await sendToGhl(record, resendGhl ? 'order.created' : 'order.updated');
       record.history.push({ at: now, by, change: ok ? 'Sent to GoHighLevel' : 'GoHighLevel webhook failed' });
       if (resendGhl && !ok) { await saveOrder(record); return json({ message: `GoHighLevel did not accept the order (${lastGhlError() || 'no response'}). Check GHL_WEBHOOK_URL and that the workflow is published.`, order: record }, 502); }
     }
